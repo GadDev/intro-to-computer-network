@@ -39,6 +39,8 @@ const groups = [
       ["throughput", "Throughput", "How much data is transferred per unit of time. The coursework reports it in megabytes per second."],
       ["timeout", "Timeout", "A time limit that triggers an action. In the UDP recovery example, the sender retries when it has waited too long for a chunk’s ACK."],
       ["retransmission", "Retransmission", "Sending data again, for example when the original data or its acknowledgement may have been lost."],
+      ["send-window", "Send window", "The range of packet numbers the sender may transmit before waiting for more acknowledgements."],
+      ["cumulative-ack", "Cumulative ACK", "One acknowledgement that confirms receipt of all data up to a point, in order."],
       ["selective-repeat", "Selective Repeat", "A recovery method that tracks individual chunks and resends only the chunks still missing an acknowledgement."],
       ["crc32", "CRC32", "A checksum the UDP coursework uses to detect accidental changes to a datagram’s payload."],
       ["sha-256", "SHA-256", "A hash algorithm that makes a fixed-length fingerprint of the file’s bytes. The coursework compares the original and saved fingerprints to check the file."],

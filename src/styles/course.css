@@ -354,26 +354,29 @@ summary { cursor: pointer; font-weight: 650; }
 .worked-diagram { margin: 1rem 0 0; max-width: 48rem; }
 .worked-diagram figcaption { margin-top: .65rem; color: var(--muted); }
 
-.worked-diagram table, .frame-table {
+.worked-diagram table, .frame-table, .comparison-table {
   width: 100%;
   border-collapse: collapse;
   background: var(--surface);
 }
 
-.worked-diagram caption, .frame-table caption {
+.worked-diagram caption, .frame-table caption, .comparison-table caption {
   text-align: left;
   padding: .65rem 0;
   font-weight: 700;
 }
 
-.worked-diagram :is(th, td), .frame-table :is(th, td) {
+.worked-diagram :is(th, td), .frame-table :is(th, td), .comparison-table :is(th, td) {
   text-align: left;
   border: 1px solid var(--edge);
   padding: .55rem .7rem;
   vertical-align: top;
 }
 
-.worked-diagram th, .frame-table thead th { color: var(--blue); }
+.worked-diagram th, .frame-table thead th, .comparison-table thead th { color: var(--blue); }
+.comparison-table { min-width: 42rem; }
+.comparison-table td { min-width: 8.5rem; }
+.reliability-table { margin-bottom: 1.5rem; }
 .worked-diagram code { font-size: 1em; }
 .table-hint { display: none; margin-bottom: .35rem; color: var(--muted); }
 .table-scroll { overflow-x: auto; }

@@ -1,0 +1,71 @@
+---
+import KnowledgeCheck from "./KnowledgeCheck.astro";
+import PacketStepper from "./PacketStepper.astro";
+import { protocols, reliabilityLesson } from "./reliability-lesson";
+
+const rows = [
+  { label: "Packets in flight", key: "inFlight" },
+  { label: "Out-of-order arrivals", key: "receiver" },
+  { label: "Packets resent", key: "resend" },
+  { label: "Retries of already-arrived packets", key: "extraResends" },
+  { label: "Trade-off", key: "tradeoff" },
+] as const;
+---
+
+<section id="reliability" aria-labelledby="reliability-heading" tabindex="-1">
+  <div class="section-heading">
+    <h2 id="reliability-heading">Three ways to recover from packet loss</h2>
+    <p>Stop-and-Wait, Go-Back-N and Selective Repeat use <a href="#ack">ACKs</a> and <a href="#retransmission">retransmissions</a> to deliver data reliably. The difference is how much they send before waiting and what they do when a packet goes missing.</p>
+    <p>In each replay, packets 1–4 have been delivered and the first attempt at packet 5 is lost. Packets 5–8 are the remaining data. The <a href="#send-window">window</a> has four slots for Go-Back-N and Selective Repeat, and all later transmissions and ACKs arrive. These are illustrated steps, with no measured timings.</p>
+  </div>
+
+  {reliabilityLesson.map((block) => {
+    if (block.component === "ProtocolComparison") {
+      return (
+        <div class="reliability-table">
+          <p class="table-hint">Scroll the table sideways to see every protocol.</p>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Compare recovery protocols">
+            <table class="comparison-table">
+              <caption>Same loss, different recovery</caption>
+              <thead>
+                <tr>
+                  <th scope="col">What to compare</th>
+                  {protocols.map(({ id, name }) => <th scope="col"><a href={`#arq-${id}`}>{name}</a></th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map(({ label, key }) => <tr><th scope="row">{label}</th>{protocols.map((protocol) => <td>{protocol[key]}</td>)}</tr>)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
+    const protocol = protocols.find(({ id }) => id === block.protocol)!;
+    return (
+      <div class="lesson" id={`arq-${protocol.id}`} tabindex="-1">
+        <h3>{protocol.name}</h3>
+        <p>{protocol.summary}</p>
+        <p>{protocol.analogy}</p>
+        <PacketStepper label={`${protocol.name} packet loss replay`} steps={protocol.timeline} />
+      </div>
+    );
+  })}
+
+  <KnowledgeCheck
+    id="check-recovery-window"
+    question="With packet 5 missing and packets 6–8 already sent, which protocol keeps 6–8 and retries just packet 5?"
+    choices={[
+      { label: "Stop-and-Wait", feedback: "With one slot, packets 6–8 have not been sent while packet 5 is awaiting an ACK." },
+      { label: "Go-Back-N", feedback: "The receiver discards 6–8 in this model, and the sender retries all four outstanding packets." },
+      { label: "Selective Repeat", correct: true, feedback: "The receiver buffers 6–8 and ACKs them individually. Packet 5 is the only one still unacknowledged in this example." },
+    ]}
+  />
+
+  <div class="lesson note">
+    <h3>How this connects to TCP and UDP</h3>
+    <p>TCP sends <a href="#cumulative-ack">cumulative ACKs</a> for its byte stream. When Selective Acknowledgment (SACK) is negotiated, it can also report ranges received beyond a gap. That resembles Selective Repeat’s treatment of out-of-order data. UDP leaves recovery to the application. In this coursework, the application uses Selective Repeat. [PDF p. 4]</p>
+    <p><a href="https://www.rfc-editor.org/rfc/rfc9293.html#section-3.4">TCP sequence and ACK numbers</a> · <a href="https://www.rfc-editor.org/rfc/rfc2018.html">TCP SACK</a> · <a href="https://gaia.cs.umass.edu/kurose_ross/videos/3/">Reliable data transfer lessons</a></p>
+  </div>
+</section>
