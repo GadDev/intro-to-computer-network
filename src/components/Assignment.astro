@@ -1,0 +1,80 @@
+---
+const exercises = [
+  {
+    title: "Part A · Build a TCP baseline",
+    task: "Connect a client to a server, send the file’s name, size, and SHA-256, then stream the file. The server saves a copy, checks it, and replies OK or MISMATCH. Log the transfer and test different buffer sizes.",
+    lesson: "TCP takes care of reliable, ordered delivery. Your program still needs to know where the file starts and ends, and verify what was saved.",
+    source: "PDF p. 2",
+    link: ["#tcp", "See the TCP walkthrough"],
+  },
+  {
+    title: "Part B · Try basic UDP",
+    task: "Split the file into numbered chunks. Send each chunk once, with recovery turned off, then record how often the saved file matches the original.",
+    lesson: "A successful send call means the data was handed to the operating system. Whether that datagram arrives is a separate question.",
+    source: "PDF pp. 3–4",
+    link: ["#udp", "Watch datagrams arrive"],
+  },
+  {
+    title: "B1 · Change the chunk size",
+    task: "Send the same file with different chunk sizes and compare throughput, packets sent, and loss.",
+    lesson: "Tiny chunks mean more packets for the same file. Very large datagrams can be split into IP fragments. Losing one fragment can prevent the whole datagram from arriving.",
+    source: "PDF p. 3",
+    link: ["#mtu", "What is an MTU?"],
+  },
+  {
+    title: "B2 · Add a pause between datagrams",
+    task: "With recovery off, vary the pause between sends. Compare loss and throughput, and record the receiver’s buffer size.",
+    lesson: "The receiver’s queue can fill if data arrives faster than the program reads it. Pacing can reduce that loss while also limiting how quickly the sender can deliver bytes.",
+    source: "PDF pp. 3–4",
+    link: ["#receive-buffer", "What is a receive buffer?"],
+  },
+  {
+    title: "B3 · Add recovery",
+    task: "Choose one recovery scheme. Use acknowledgements and retries, reject corrupt and duplicate chunks, and stop cleanly when retries run out. Measure what happens as you increase loss.",
+    lesson: "Resending missing data takes time and creates extra traffic. Record both retransmissions and effective throughput to see the cost of recovery.",
+    source: "PDF p. 4",
+    link: ["#udp-recovery", "Try the Selective Repeat animation"],
+  },
+  {
+    title: "B4 · Put chunks back in order",
+    task: "Make datagrams arrive out of order. Compare a file written in arrival order with a file rebuilt using chunk numbers, then check both hashes.",
+    lesson: "Two files can be the same size and contain different bytes. Chunk numbers tell you where each piece belongs, and the final hash lets you check the reconstruction.",
+    source: "PDF pp. 4–5",
+    link: ["#sequence-number", "What is a sequence number?"],
+  },
+];
+---
+
+<section id="assignment" aria-labelledby="assignment-heading">
+  <div class="section-heading">
+    <h2 id="assignment-heading">Assignment · TCP vs UDP File Transfer</h2>
+    <p>Build a client and server that send a file two ways. Start with TCP as your reference. Then use UDP to discover what can go wrong, add a way to recover, and measure how those choices affect speed and correctness. <small>[PDF p. 1]</small></p>
+  </div>
+
+  <ol class="assignment-exercises">
+    {exercises.map(({ title, task, lesson, source, link }) => (
+      <li>
+        <h3>{title}</h3>
+        <p><strong>What to do.</strong> {task}</p>
+        <p><strong>What it teaches.</strong> {lesson}</p>
+        <p class="assignment-reference"><a href={link[0]}>{link[1]}</a> <small>[{source}]</small></p>
+      </li>
+    ))}
+  </ol>
+
+  <div class="assignment-summary">
+    <div class="note">
+      <h3>How to show your results</h3>
+      <p>Change one setting at a time and repeat each setup at least five times. Record the test conditions, average, and variation. Keep failed runs and check the original and saved file’s <a href="#sha-256">SHA-256</a> each time. Use plots to show how chunk size, pacing, and loss affect performance, and to show the order in which chunks arrived. <small>[PDF pp. 5–7]</small></p>
+    </div>
+    <div class="note">
+      <h3>What to hand in</h3>
+      <ul>
+        <li><strong>Source code.</strong> Include the client, server, and instructions to reproduce your experiments.</li>
+        <li><strong>Written report.</strong> Submit an 8–12 page PDF, excluding appendices. Explain your design, test setup, results, and what they tell you.</li>
+        <li><strong>Presentation.</strong> Submit PDF slides. Plan for 12 minutes of explanation and 3 minutes of questions.</li>
+      </ul>
+      <p><small>[PDF pp. 1–2, 6–8]</small></p>
+    </div>
+  </div>
+</section>
