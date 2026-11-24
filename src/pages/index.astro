@@ -1,8 +1,11 @@
 ---
-import UdpStepper from "../components/UdpStepper.astro";
+import Assignment from "../components/Assignment.astro";
+import Glossary from "../components/Glossary.astro";
+import PacketStepper from "../components/PacketStepper.astro";
+import { tcpSteps, udpSteps, udpRecoverySteps } from "../components/packet-lessons";
 import "../styles/course.css";
 
-const tcpSteps = [
+const tcpTransfer = [
   ["Connect", "The server waits on a port. The client connects, and TCP opens the connection with a handshake."],
   ["Send the label", "The client sends the file’s name, size, and SHA-256 fingerprint. The size tells the server how many file bytes to read."],
   ["Stream and save", "TCP delivers the bytes in order and retries lost data. The server keeps reading until it has the announced number of bytes, then saves the copy under a new name."],
@@ -15,7 +18,7 @@ const tcpSteps = [
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Learn how TCP and UDP move a file and step through how a missing UDP chunk is recovered." />
+    <meta name="description" content="Step through TCP and UDP animations, see how missing file data is recovered, and look up networking terms." />
     <meta name="color-scheme" content="dark" />
     <title>Introduction to Computer Networks</title>
   </head>
@@ -25,7 +28,9 @@ const tcpSteps = [
         <a class="wordmark" href="#top">Computer Networks</a>
         <nav aria-label="Course">
           <a href="#tcp">TCP transfer</a>
-          <a href="#udp">UDP recovery</a>
+          <a href="#udp">UDP datagrams</a>
+          <a href="#assignment">Assignment</a>
+          <a href="#glossary">Glossary</a>
         </nav>
       </div>
     </header>
@@ -33,7 +38,7 @@ const tcpSteps = [
     <main id="top" class="wrap">
       <div class="intro">
         <h1>Introduction to <span>Computer Networks</span></h1>
-        <p>Follow a file from client to server. Then see how a UDP transfer recovers when a chunk goes missing.</p>
+        <p>Follow data between two computers. See what happens when it gets delayed or lost, and how a file transfer can recover.</p>
         <div class="intro-links">
           <a class="button primary" href="#tcp">Follow the TCP transfer</a>
           <a class="button" href="#udp">Try the UDP demo</a>
@@ -46,7 +51,7 @@ const tcpSteps = [
           <p>Think of a file with a label and a receipt. The client sends the label and file, then the server sends the receipt back.</p>
         </div>
         <ol class="tcp-steps">
-          {tcpSteps.map(([title, detail], index) => (
+          {tcpTransfer.map(([title, detail], index) => (
             <li>
               <span class="number" aria-hidden="true">{index + 1}</span>
               <div><h3>{title}</h3><p>{detail}</p></div>
@@ -55,17 +60,31 @@ const tcpSteps = [
         </ol>
         <div class="note">
           <h3>Two confirmations</h3>
-          <p>A TCP <strong>ACK</strong> confirms that the receiving computer’s TCP stack got the bytes. The file transfer program’s <strong>OK</strong> confirms that the saved file passed the SHA-256 check.</p>
+          <p>A TCP <a href="#ack">ACK</a> confirms that the receiving computer’s TCP stack got the bytes. The file transfer program’s <a href="#file-verdict">OK</a> confirms that the saved file passed the <a href="#sha-256">SHA-256</a> check.</p>
+        </div>
+        <div class="lesson">
+          <h3>Watch TCP open, recover, and close</h3>
+          <p>Follow the <a href="#handshake">handshake</a>, then watch TCP fill a gap in its <a href="#byte-stream">byte stream</a>. See how both sides use <a href="#fin">FIN</a> to finish sending.</p>
+          <PacketStepper label="TCP connection and recovery animation" steps={tcpSteps} sender="Client" receiver="Server" />
         </div>
       </section>
 
       <section id="udp" aria-labelledby="udp-heading">
         <div class="section-heading">
-          <h2 id="udp-heading">Recover a missing UDP chunk</h2>
-          <p>Illustration of the coursework’s Selective Repeat design. The file transfer program tracks which chunks arrived and resends the missing ones.</p>
+          <h2 id="udp-heading">Send messages over UDP</h2>
+          <p><a href="#udp-definition">UDP</a> sends each message as a <a href="#datagram">datagram</a>. See how <a href="#packet-loss">loss</a> and <a href="#reordering">reordering</a> affect what reaches the receiving program.</p>
         </div>
-        <UdpStepper />
+        <h3 class="demo-heading">Watch datagrams arrive</h3>
+        <PacketStepper label="UDP loss and reordering animation" steps={udpSteps} />
+        <div class="lesson" id="udp-recovery">
+          <h3>Recover a missing UDP chunk</h3>
+          <p>Illustration of the coursework’s <a href="#selective-repeat">Selective Repeat</a> design. The file transfer program confirms individual chunks and uses a <a href="#timeout">timeout</a> to retry a missing chunk.</p>
+          <PacketStepper label="UDP application recovery animation" steps={udpRecoverySteps} />
+        </div>
       </section>
+
+      <Assignment />
+      <Glossary />
     </main>
 
     <footer class="wrap">
