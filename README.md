@@ -6,6 +6,8 @@ The first page explains the TCP file transfer and includes animations for TCP co
 
 The Wireshark lab at `/labs/wireshark/` includes a downloadable nine-frame capture, a frame-by-frame reference table, and questions with feedback. The sample records a controlled five-byte loopback transfer using the smoltcp TCP stack.
 
+The reliability comparison uses the [component catalog pattern](https://daily-ai-pulse-db253.web.app/guides/generative-ui-architecture-map/). A typed local lesson specification lists the comparison table and packet replays. Astro renders those approved components at build time. The lesson has no runtime model dependency and works offline.
+
 ## Run locally
 
 Use Node.js 24 and npm.
