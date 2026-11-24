@@ -1,0 +1,77 @@
+---
+import UdpStepper from "../components/UdpStepper.astro";
+import "../styles/course.css";
+
+const tcpSteps = [
+  ["Connect", "The server waits on a port. The client connects, and TCP opens the connection with a handshake."],
+  ["Send the label", "The client sends the file’s name, size, and SHA-256 fingerprint. The size tells the server how many file bytes to read."],
+  ["Stream and save", "TCP delivers the bytes in order and retries lost data. The server keeps reading until it has the announced number of bytes, then saves the copy under a new name."],
+  ["Check and reply", "The server calculates the saved copy’s fingerprint. It sends OK if the fingerprints match, or MISMATCH if they differ."],
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Learn how TCP and UDP move a file and step through how a missing UDP chunk is recovered." />
+    <meta name="color-scheme" content="dark" />
+    <title>Introduction to Computer Networks</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="wordmark" href="#top">Computer Networks</a>
+        <nav aria-label="Course">
+          <a href="#tcp">TCP transfer</a>
+          <a href="#udp">UDP recovery</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="wrap">
+      <div class="intro">
+        <h1>Introduction to <span>Computer Networks</span></h1>
+        <p>Follow a file from client to server. Then see how a UDP transfer recovers when a chunk goes missing.</p>
+        <div class="intro-links">
+          <a class="button primary" href="#tcp">Follow the TCP transfer</a>
+          <a class="button" href="#udp">Try the UDP demo</a>
+        </div>
+      </div>
+
+      <section id="tcp" aria-labelledby="tcp-heading">
+        <div class="section-heading">
+          <h2 id="tcp-heading">Send a file over TCP</h2>
+          <p>Think of a file with a label and a receipt. The client sends the label and file, then the server sends the receipt back.</p>
+        </div>
+        <ol class="tcp-steps">
+          {tcpSteps.map(([title, detail], index) => (
+            <li>
+              <span class="number" aria-hidden="true">{index + 1}</span>
+              <div><h3>{title}</h3><p>{detail}</p></div>
+            </li>
+          ))}
+        </ol>
+        <div class="note">
+          <h3>Two confirmations</h3>
+          <p>A TCP <strong>ACK</strong> confirms that the receiving computer’s TCP stack got the bytes. The file transfer program’s <strong>OK</strong> confirms that the saved file passed the SHA-256 check.</p>
+        </div>
+      </section>
+
+      <section id="udp" aria-labelledby="udp-heading">
+        <div class="section-heading">
+          <h2 id="udp-heading">Recover a missing UDP chunk</h2>
+          <p>Illustration of the coursework’s Selective Repeat design. The file transfer program tracks which chunks arrived and resends the missing ones.</p>
+        </div>
+        <UdpStepper />
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <a href="https://github.com/GadDev/binfo-networks-final-project">Coursework code and results</a>
+      <a href="https://www.rfc-editor.org/rfc/rfc9293.html">TCP specification</a>
+      <a href="https://www.rfc-editor.org/rfc/rfc768.html">UDP specification</a>
+    </footer>
+  </body>
+</html>

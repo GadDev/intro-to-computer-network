@@ -1,0 +1,140 @@
+---
+import { udpSteps } from "./udp-steps";
+---
+
+<udp-stepper>
+  <div class="interactive" data-interactive hidden>
+    <div class="endpoints" aria-hidden="true">
+      <span>Sender</span>
+      <span>Receiver</span>
+    </div>
+    <div class="track" aria-hidden="true">
+      <span class="packet" data-packet></span>
+    </div>
+    <div class="file">
+      <p>Receiver’s file</p>
+      <ul class="file-slots">
+        <li data-slot="0">#1 · Empty</li>
+        <li data-slot="1">#2 · Empty</li>
+      </ul>
+    </div>
+    <div class="step-copy" role="status" aria-atomic="true">
+      <p class="step-index" data-step-index></p>
+      <h3 data-title></h3>
+      <p data-detail></p>
+    </div>
+    <div class="controls">
+      <button type="button" data-prev>Previous</button>
+      <button type="button" class="primary" data-next>Next step</button>
+      <button type="button" data-play>Play</button>
+      <button type="button" data-reset>Reset</button>
+    </div>
+  </div>
+
+  <details open>
+    <summary>Read the full sequence</summary>
+    <ol class="transcript">
+      {udpSteps.map(({ title, detail }) => <li><strong>{title}.</strong> {detail}</li>)}
+    </ol>
+  </details>
+</udp-stepper>
+
+<script>
+  import { udpSteps } from "./udp-steps";
+
+  class UdpStepper extends HTMLElement {
+    connectedCallback() {
+      const interactive = this.querySelector<HTMLElement>("[data-interactive]")!;
+      const packet = this.querySelector<HTMLElement>("[data-packet]")!;
+      const index = this.querySelector<HTMLElement>("[data-step-index]")!;
+      const title = this.querySelector<HTMLElement>("[data-title]")!;
+      const detail = this.querySelector<HTMLElement>("[data-detail]")!;
+      const slots = this.querySelectorAll<HTMLElement>("[data-slot]");
+      const previous = this.querySelector<HTMLButtonElement>("[data-prev]")!;
+      const next = this.querySelector<HTMLButtonElement>("[data-next]")!;
+      const play = this.querySelector<HTMLButtonElement>("[data-play]")!;
+      const reset = this.querySelector<HTMLButtonElement>("[data-reset]")!;
+      const transcript = this.querySelector<HTMLDetailsElement>("details")!;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      let step = 0;
+      let timer: number | undefined;
+      let movement: Animation | undefined;
+
+      function stop() {
+        window.clearInterval(timer);
+        timer = undefined;
+        play.textContent = "Play";
+      }
+
+      function show(animate = false) {
+        const event = udpSteps[step];
+        movement?.cancel();
+        movement = undefined;
+        packet.dataset.tone = event.tone;
+        packet.textContent = event.label;
+        packet.style.left = `${event.to}%`;
+        if (animate && !reducedMotion.matches && event.from !== event.to) {
+          movement = packet.animate(
+            [{ left: `${event.from}%` }, { left: `${event.to}%` }],
+            { duration: 440, easing: "cubic-bezier(.2,.8,.2,1)" },
+          );
+        }
+
+        slots.forEach((slot, position) => {
+          const filled = event.received[position];
+          slot.dataset.filled = String(filled);
+          slot.textContent = `#${position + 1} · ${filled ? "Received" : "Empty"}`;
+        });
+        index.textContent = `Step ${step + 1} of ${udpSteps.length}`;
+        title.textContent = event.title;
+        detail.textContent = event.detail;
+        previous.disabled = step === 0;
+        next.disabled = step === udpSteps.length - 1;
+      }
+
+      function advance() {
+        step += 1;
+        show(true);
+        if (step === udpSteps.length - 1) stop();
+      }
+
+      previous.addEventListener("click", () => {
+        stop();
+        step -= 1;
+        show();
+      });
+      next.addEventListener("click", () => {
+        stop();
+        advance();
+      });
+      reset.addEventListener("click", () => {
+        stop();
+        step = 0;
+        show();
+      });
+      play.addEventListener("click", () => {
+        if (timer !== undefined) {
+          stop();
+          movement?.pause();
+          return;
+        }
+
+        if (step === udpSteps.length - 1) {
+          step = 0;
+          show();
+        } else if (movement?.playState === "paused") {
+          movement.play();
+        }
+        play.textContent = "Pause";
+        timer = window.setInterval(advance, 2600);
+      });
+
+      show();
+      interactive.hidden = false;
+      transcript.open = false;
+    }
+  }
+
+  customElements.define("udp-stepper", UdpStepper);
+</script>
