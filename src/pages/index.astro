@@ -18,16 +18,22 @@ const captureLesson = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}labs/wire
 ---
 
 <CourseLayout page="course" title="Introduction to Computer Networks" description="Step through TCP and UDP animations, see how missing file data is recovered, and look up networking terms.">
-  <div class="intro">
-    <h1>Introduction to <span>Computer Networks</span></h1>
-    <p>Follow data between two computers. See what happens when it gets delayed or lost, and how a file transfer can recover.</p>
-    <div class="intro-links">
-      <a class="button primary" href="#tcp">Follow the TCP transfer</a>
-      <a class="button" href="#udp">Try the UDP demo</a>
+  <div class="intro course-intro">
+    <div>
+      <h1>Introduction to <span>Computer Networks</span></h1>
+      <p>Follow data between two computers. See what happens when it gets delayed or lost, and how a file transfer can recover.</p>
     </div>
+    <nav class="learning-path" aria-label="Learning path">
+      <h2>Start here</h2>
+      <ol>
+        <li><a href="#tcp"><strong>TCP file transfer</strong><span>Follow a reliable connection.</span></a></li>
+        <li><a href="#udp"><strong>UDP datagrams</strong><span>See how an application handles loss.</span></a></li>
+        <li><a href={captureLesson}><strong>Wireshark lab</strong><span>Read a packet capture.</span></a></li>
+      </ol>
+    </nav>
   </div>
 
-  <section id="tcp" aria-labelledby="tcp-heading">
+  <section id="tcp" aria-labelledby="tcp-heading" tabindex="-1">
     <div class="section-heading">
       <h2 id="tcp-heading">Send a file over TCP</h2>
       <p>Think of a file with a label and a receipt. The client sends the label and file, then the server sends the receipt back.</p>
@@ -59,10 +65,16 @@ const captureLesson = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}labs/wire
         { label: "It waits for the missing bytes, then reads in order.", correct: true, feedback: "TCP fills the gap by retransmission before delivering this part of the byte stream in order." },
       ]}
     />
-    <p class="lesson-link"><a href={captureLesson}>Find the handshake and application reply in Wireshark</a></p>
+    <div class="lesson-next">
+      <div>
+        <h3>Next lesson · UDP datagrams</h3>
+        <p>See what happens when messages are delivered independently.</p>
+      </div>
+      <a class="button primary" href="#udp">Continue to UDP</a>
+    </div>
   </section>
 
-  <section id="udp" aria-labelledby="udp-heading">
+  <section id="udp" aria-labelledby="udp-heading" tabindex="-1">
     <div class="section-heading">
       <h2 id="udp-heading">Send messages over UDP</h2>
       <p><a href="#udp-definition">UDP</a> sends each message as a <a href="#datagram">datagram</a>. See how <a href="#packet-loss">loss</a> and <a href="#reordering">reordering</a> affect what reaches the receiving program.</p>
@@ -94,6 +106,13 @@ const captureLesson = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}labs/wire
         { label: "A hash comparison only checks the file size.", feedback: "SHA-256 uses the file’s contents, including the order of its bytes." },
       ]}
     />
+    <div class="lesson-next">
+      <div>
+        <h3>Next activity · Wireshark lab</h3>
+        <p>Find the handshake, data, and acknowledgements in a capture.</p>
+      </div>
+      <a class="button primary" href={captureLesson}>Open the Wireshark lab</a>
+    </div>
   </section>
 
   <Assignment />

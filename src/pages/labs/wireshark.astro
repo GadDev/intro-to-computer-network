@@ -40,9 +40,10 @@ const frames = [
 
   <section aria-labelledby="frame-guide" class="lab-section">
     <div class="section-heading">
-      <h2 id="frame-guide">Read the exchange</h2>
+      <h2 id="frame-guide" tabindex="-1">Read the exchange</h2>
       <p>Select a frame and expand <strong>Transmission Control Protocol</strong>. Compare the source and destination ports, <strong>Flags</strong>, <strong>Sequence Number</strong>, <strong>Acknowledgment Number</strong>, and <strong>TCP Segment Len</strong> with the table. Use Wireshark’s <a href={`${home}#relative-sequence-number`}>relative sequence numbers</a> for the displayed Seq and ACK values.</p>
     </div>
+    <p class="table-hint">Scroll the table sideways to see every column.</p>
     <div class="table-scroll" tabindex="0" role="region" aria-label="Captured TCP frames">
       <table class="frame-table">
         <caption>TCP capture · relative Seq and ACK numbers</caption>
@@ -81,7 +82,14 @@ const frames = [
         { label: "The server checked a saved file’s SHA-256.", feedback: "The acknowledgement number tracks received bytes. The lab checks a short message, and the coursework sends its hash verdict in application data." },
       ]}
     />
-    <p class="lesson-link"><a href={`${home}#tcp`}>Return to the TCP walkthrough</a></p>
+    <div class="lesson-next">
+      <div>
+        <h3>Apply what you learned</h3>
+        <p>Use the assignment guide to plan your own TCP and UDP transfers.</p>
+      </div>
+      <a class="button primary" href={`${home}#assignment`}>Open the assignment guide</a>
+      <a class="button" href={`${home}#tcp`}>Return to TCP</a>
+    </div>
   </section>
 
   <section aria-labelledby="sources-heading" class="lab-section">

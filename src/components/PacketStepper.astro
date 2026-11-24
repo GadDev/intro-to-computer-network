@@ -13,14 +13,27 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
 
 <packet-stepper role="group" aria-label={label} data-steps={JSON.stringify(steps)}>
   <div class="interactive" data-interactive hidden>
-    <div class="endpoints" aria-hidden="true">
-      <span>{sender}</span>
-      <span>{receiver}</span>
+    <div class="packet-stage" aria-hidden="true">
+      <div class="endpoints">
+        <span>{sender}</span>
+        <span>{receiver}</span>
+      </div>
+      <div class="track">
+        <span class="packet" data-packet></span>
+      </div>
     </div>
-    <div class="track" aria-hidden="true">
-      <span class="packet" data-packet></span>
+    <div class="controls" role="group" aria-label="Animation controls">
+      <button type="button" class="primary" data-next>Next step</button>
+      <button type="button" data-prev>Previous</button>
+      <button type="button" data-play>Play</button>
+      <button type="button" data-reset>Reset</button>
     </div>
     <div class="step-copy" role="status" aria-atomic="true">
+      <div class="step-caption">
+        <p class="step-index" data-step-index></p>
+        <h4 data-title></h4>
+        <p data-detail></p>
+      </div>
       <div class="receiver-status">
         <p><strong>{receiver}</strong> <span data-receiver></span></p>
         {steps[0].fileSlots && (
@@ -29,17 +42,6 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
           </ul>
         )}
       </div>
-      <div class="step-caption">
-        <p class="step-index" data-step-index></p>
-        <h4 data-title></h4>
-        <p data-detail></p>
-      </div>
-    </div>
-    <div class="controls">
-      <button type="button" data-prev>Previous</button>
-      <button type="button" class="primary" data-next>Next step</button>
-      <button type="button" data-play>Play</button>
-      <button type="button" data-reset>Reset</button>
     </div>
   </div>
 
@@ -109,8 +111,9 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
         index.textContent = `Step ${step + 1} of ${steps.length}`;
         title.textContent = event.title;
         detail.textContent = event.detail;
-        previous.disabled = step === 0;
-        next.disabled = step === last;
+        // Keep focus on the active button when the learner reaches either end.
+        previous.setAttribute("aria-disabled", String(step === 0));
+        next.setAttribute("aria-disabled", String(step === last));
       }
 
       function advance() {
@@ -120,11 +123,13 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
       }
 
       previous.addEventListener("click", () => {
+        if (step === 0) return;
         stop();
         step -= 1;
         show();
       }, options);
       next.addEventListener("click", () => {
+        if (step === last) return;
         stop();
         advance();
       }, options);
