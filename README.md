@@ -4,6 +4,8 @@ A beginner-friendly course and presentation companion for the TCP vs UDP File Tr
 
 The first page explains the TCP file transfer and includes animations for TCP connection and recovery, UDP loss and reordering, and Selective Repeat recovery. The assignment section explains what to build, test, submit, and learn. A glossary links the lessons to short definitions. The course uses Astro, TypeScript, and CSS and works locally after the static build.
 
+The Wireshark lab at `/labs/wireshark/` includes a downloadable nine-frame capture, a frame-by-frame reference table, and questions with feedback. The sample records a controlled five-byte loopback transfer using the smoltcp TCP stack.
+
 ## Run locally
 
 Use Node.js 24 and npm.

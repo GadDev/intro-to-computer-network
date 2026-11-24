@@ -1,0 +1,59 @@
+---
+interface Props {
+  id: string;
+  question: string;
+  choices: { label: string; feedback: string; correct?: true }[];
+}
+
+const { id, question, choices } = Astro.props;
+const answer = choices.find((choice) => choice.correct);
+---
+
+<knowledge-check class="knowledge-check" data-choices={JSON.stringify(choices)}>
+  <p class="check-question" id={id}>{question}</p>
+  <form data-check-form hidden>
+    <fieldset aria-labelledby={id}>
+      {choices.map(({ label }, index) => (
+        <label class="check-choice">
+          <input type="radio" name={id} value={index} required />
+          <span>{label}</span>
+        </label>
+      ))}
+    </fieldset>
+    <button type="submit">Check answer</button>
+    <p class="check-feedback" role="status" aria-atomic="true" data-check-feedback></p>
+  </form>
+  <details data-check-answer>
+    <summary>Show answer</summary>
+    <p><strong>{answer?.label}</strong> {answer?.feedback}</p>
+  </details>
+</knowledge-check>
+
+<script>
+  class KnowledgeCheck extends HTMLElement {
+    connectedCallback() {
+      const form = this.querySelector<HTMLFormElement>("[data-check-form]")!;
+      const feedback = this.querySelector<HTMLElement>("[data-check-feedback]")!;
+      const answer = this.querySelector<HTMLDetailsElement>("[data-check-answer]")!;
+      const choices: { feedback: string; correct?: true }[] = JSON.parse(this.dataset.choices!);
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const selected = form.querySelector<HTMLInputElement>("input:checked");
+        if (!selected) return;
+        const choice = choices[Number(selected.value)];
+        feedback.textContent = `${choice.correct ? "Correct." : "Try again."} ${choice.feedback}`;
+        feedback.dataset.result = choice.correct ? "correct" : "retry";
+      });
+
+      form.addEventListener("change", () => {
+        feedback.textContent = "";
+      });
+
+      form.hidden = false;
+      answer.hidden = true;
+    }
+  }
+
+  customElements.define("knowledge-check", KnowledgeCheck);
+</script>

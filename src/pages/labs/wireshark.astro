@@ -1,0 +1,96 @@
+---
+import KnowledgeCheck from "../../components/KnowledgeCheck.astro";
+import CourseLayout from "../../layouts/CourseLayout.astro";
+
+const home = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const frames = [
+  [1, "Client → Server", "SYN", 0, "—", 0, "Client opens the connection."],
+  [2, "Server → Client", "SYN, ACK", 0, 1, 0, "Server acknowledges the client’s SYN and sends its own."],
+  [3, "Client → Server", "ACK", 1, 1, 0, "Client acknowledges the server’s SYN."],
+  [4, "Client → Server", "PSH, ACK", 1, 1, 5, "Client sends HELLO."],
+  [5, "Server → Client", "PSH, ACK", 1, 6, 2, "Server acknowledges the five bytes and sends OK."],
+  [6, "Client → Server", "FIN, ACK", 6, 3, 0, "Client acknowledges OK and finishes sending."],
+  [7, "Server → Client", "ACK", 3, 7, 0, "Server acknowledges the client’s FIN."],
+  [8, "Server → Client", "FIN, ACK", 3, 7, 0, "Server finishes sending."],
+  [9, "Client → Server", "ACK", 7, 4, 0, "Client acknowledges the server’s FIN."],
+];
+---
+
+<CourseLayout page="wireshark" title="Wireshark lab | Computer Networks" description="Read a nine-frame TCP capture and identify the handshake, payload, acknowledgement, and close.">
+  <div class="intro lab-intro">
+    <h1>Read a <span>TCP capture</span></h1>
+    <p>Open a small trace in Wireshark and follow five bytes from a client to a server. Find the handshake, the data, and the reply.</p>
+    <div class="intro-links">
+      <a class="button primary" href={`${home}captures/tcp-hello.pcap`} download>Download the sample capture</a>
+      <a class="button" href="#frame-guide">Read the captured frames</a>
+    </div>
+  </div>
+
+  <section aria-labelledby="filters-heading" class="lab-section">
+    <div class="section-heading">
+      <h2 id="filters-heading">Open and filter the capture</h2>
+      <p>The capture contains nine frames from a controlled transfer between two smoltcp sockets on an in-memory <a href={`${home}#loopback`}>loopback</a> link. The client sends <code>HELLO</code> from port <code>40000</code>. The server on port <code>5001</code> compares those bytes with the expected message and replies <code>OK</code>. In the coursework, the file program performs a <a href={`${home}#sha-256`}>SHA-256 check</a> before replying.</p>
+    </div>
+    <ol class="lab-steps">
+      <li><strong>Open the file.</strong> In Wireshark, choose <strong>File → Open</strong> and select <code>tcp-hello.pcap</code>.</li>
+      <li><strong>Find the service.</strong> Type <code>tcp.port == 5001</code> in the <a href={`${home}#display-filter`}>display filter</a> bar and press Enter. Both directions appear because port 5001 can be the source or the destination.</li>
+      <li><strong>Isolate this conversation.</strong> Apply <code>tcp.stream == 0</code> to show just this <a href={`${home}#tcp-stream`}>stream</a>. Add <code>&amp;&amp; tcp.flags.syn == 1</code> to focus on the two SYN-bearing frames, or <code>&amp;&amp; tcp.len &gt; 0</code> to focus on frames that carry application data. Restore <code>tcp.stream == 0</code> before reading the full exchange.</li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="frame-guide" class="lab-section">
+    <div class="section-heading">
+      <h2 id="frame-guide">Read the exchange</h2>
+      <p>Select a frame and expand <strong>Transmission Control Protocol</strong>. Compare the source and destination ports, <strong>Flags</strong>, <strong>Sequence Number</strong>, <strong>Acknowledgment Number</strong>, and <strong>TCP Segment Len</strong> with the table. Use Wireshark’s <a href={`${home}#relative-sequence-number`}>relative sequence numbers</a> for the displayed Seq and ACK values.</p>
+    </div>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Captured TCP frames">
+      <table class="frame-table">
+        <caption>TCP capture · relative Seq and ACK numbers</caption>
+        <thead>
+          <tr><th scope="col">Frame</th><th scope="col">Direction</th><th scope="col">Flags</th><th scope="col">Seq</th><th scope="col">ACK</th><th scope="col">TCP Len</th><th scope="col">What happened</th></tr>
+        </thead>
+        <tbody>
+          {frames.map(([frame, direction, flags, seq, ack, length, meaning]) => (
+            <tr>
+              <th scope="row">{frame}</th><td>{direction}</td><td><code>{flags}</code></td><td>{seq}</td><td>{ack}</td><td>{length}</td><td>{meaning}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <ul class="lab-steps">
+      <li><strong>Frames 1–3.</strong> Trace <a href={`${home}#syn`}>SYN</a>, SYN + ACK, and <a href={`${home}#ack`}>ACK</a>. The SYN consumes one sequence number, so each side starts its payload at relative sequence 1.</li>
+      <li><strong>Frames 4–5.</strong> Length counts TCP <a href={`${home}#payload`}>payload</a> bytes. The client sends five and the server asks for byte 6 next. The very same frame carries two application bytes, <code>OK</code>. Right-click frame 4 and choose <strong>Follow → TCP Stream</strong> to see both messages.</li>
+      <li><strong>Frames 6–9.</strong> Each endpoint sends a <a href={`${home}#fin`}>FIN</a> to finish sending. The other side acknowledges it. Use the zero payload lengths to distinguish these frames from the <code>HELLO</code> and <code>OK</code> data frames.</li>
+    </ul>
+
+    <KnowledgeCheck
+      id="check-trace-handshake"
+      question="Which frame shows the client accepting the server’s starting sequence number?"
+      choices={[
+        { label: "Frame 2", feedback: "Frame 2 travels from server to client. It acknowledges the client’s SYN and announces the server’s sequence number." },
+        { label: "Frame 3", correct: true, feedback: "Frame 3 travels from client to server and has ACK 1. That acknowledges the server’s SYN at relative sequence 0." },
+        { label: "Frame 4", feedback: "Frame 4 carries HELLO. Look for the client’s first ACK just after the server’s SYN." },
+      ]}
+    />
+    <KnowledgeCheck
+      id="check-trace-verdict"
+      question="In frame 5, what does ACK 6 tell you?"
+      choices={[
+        { label: "The server’s TCP stack received the client’s five bytes.", correct: true, feedback: "The client started at sequence 1, so the five bytes fill positions 1 through 5. The payload OK carries the application’s response." },
+        { label: "The server checked a saved file’s SHA-256.", feedback: "The acknowledgement number tracks received bytes. The lab checks a short message, and the coursework sends its hash verdict in application data." },
+      ]}
+    />
+    <p class="lesson-link"><a href={`${home}#tcp`}>Return to the TCP walkthrough</a></p>
+  </section>
+
+  <section aria-labelledby="sources-heading" class="lab-section">
+    <h2 id="sources-heading">References</h2>
+    <ul class="lab-steps">
+      <li><a href="https://www.wireshark.org/docs/dfref/t/tcp.html">Wireshark TCP display filter fields</a></li>
+      <li><a href="https://www.wireshark.org/docs/wsug_html_chunked/ChAdvFollowStreamSection.html">Wireshark guide to following a stream</a></li>
+      <li><a href="https://www.rfc-editor.org/rfc/rfc9293.html#section-3.4">RFC 9293 · TCP sequence numbers</a></li>
+      <li><a href="https://github.com/smoltcp-rs/smoltcp/tree/v0.12.0">smoltcp 0.12.0 · TCP stack and loopback packet writer</a></li>
+    </ul>
+  </section>
+</CourseLayout>
