@@ -1,9 +1,11 @@
 ---
 import Assignment from "../components/Assignment.astro";
 import Glossary from "../components/Glossary.astro";
+import KnowledgeCheck from "../components/KnowledgeCheck.astro";
 import PacketStepper from "../components/PacketStepper.astro";
+import WorkedExamples from "../components/WorkedExamples.astro";
 import { tcpSteps, udpSteps, udpRecoverySteps } from "../components/packet-lessons";
-import "../styles/course.css";
+import CourseLayout from "../layouts/CourseLayout.astro";
 
 const tcpTransfer = [
   ["Connect", "The server waits on a port. The client connects, and TCP opens the connection with a handshake."],
@@ -11,86 +13,89 @@ const tcpTransfer = [
   ["Stream and save", "TCP delivers the bytes in order and retries lost data. The server keeps reading until it has the announced number of bytes, then saves the copy under a new name."],
   ["Check and reply", "The server calculates the saved copy’s fingerprint. It sends OK if the fingerprints match, or MISMATCH if they differ."],
 ];
+
+const captureLesson = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}labs/wireshark/`;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Step through TCP and UDP animations, see how missing file data is recovered, and look up networking terms." />
-    <meta name="color-scheme" content="dark" />
-    <title>Introduction to Computer Networks</title>
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="wrap header-inner">
-        <a class="wordmark" href="#top">Computer Networks</a>
-        <nav aria-label="Course">
-          <a href="#tcp">TCP transfer</a>
-          <a href="#udp">UDP datagrams</a>
-          <a href="#assignment">Assignment</a>
-          <a href="#glossary">Glossary</a>
-        </nav>
-      </div>
-    </header>
+<CourseLayout page="course" title="Introduction to Computer Networks" description="Step through TCP and UDP animations, see how missing file data is recovered, and look up networking terms.">
+  <div class="intro">
+    <h1>Introduction to <span>Computer Networks</span></h1>
+    <p>Follow data between two computers. See what happens when it gets delayed or lost, and how a file transfer can recover.</p>
+    <div class="intro-links">
+      <a class="button primary" href="#tcp">Follow the TCP transfer</a>
+      <a class="button" href="#udp">Try the UDP demo</a>
+    </div>
+  </div>
 
-    <main id="top" class="wrap">
-      <div class="intro">
-        <h1>Introduction to <span>Computer Networks</span></h1>
-        <p>Follow data between two computers. See what happens when it gets delayed or lost, and how a file transfer can recover.</p>
-        <div class="intro-links">
-          <a class="button primary" href="#tcp">Follow the TCP transfer</a>
-          <a class="button" href="#udp">Try the UDP demo</a>
-        </div>
-      </div>
+  <section id="tcp" aria-labelledby="tcp-heading">
+    <div class="section-heading">
+      <h2 id="tcp-heading">Send a file over TCP</h2>
+      <p>Think of a file with a label and a receipt. The client sends the label and file, then the server sends the receipt back.</p>
+    </div>
+    <ol class="tcp-steps">
+      {tcpTransfer.map(([title, detail], index) => (
+        <li>
+          <span class="number" aria-hidden="true">{index + 1}</span>
+          <div><h3>{title}</h3><p>{detail}</p></div>
+        </li>
+      ))}
+    </ol>
+    <div class="note">
+      <h3>Two confirmations</h3>
+      <p>A TCP <a href="#ack">ACK</a> confirms that the receiving computer’s TCP stack got the bytes. The file transfer program’s <a href="#file-verdict">OK</a> confirms that the saved file passed the <a href="#sha-256">SHA-256</a> check.</p>
+    </div>
+    <div class="lesson">
+      <h3>Watch TCP open, recover, and close</h3>
+      <p>Follow the <a href="#handshake">handshake</a>, then watch TCP fill a gap in its <a href="#byte-stream">byte stream</a>. See how both sides use <a href="#fin">FIN</a> to finish sending.</p>
+      <p>Use <strong>Next step</strong> or <strong>Play</strong> to move the TCP segment between the client and server. Pause after <strong>Later bytes</strong> to explain why the receiving program still has to wait.</p>
+      <PacketStepper label="TCP connection and recovery animation" steps={tcpSteps} sender="Client" receiver="Server" />
+    </div>
+    <WorkedExamples lesson="tcp" />
+    <KnowledgeCheck
+      id="check-tcp-gap"
+      question="Predict the next event. Later TCP bytes arrive while the first bytes are still missing. What can the receiving program read from this part of the stream?"
+      choices={[
+        { label: "It reads the later bytes immediately.", feedback: "TCP may hold later bytes internally while the earlier bytes are still missing." },
+        { label: "It waits for the missing bytes, then reads in order.", correct: true, feedback: "TCP fills the gap by retransmission before delivering this part of the byte stream in order." },
+      ]}
+    />
+    <p class="lesson-link"><a href={captureLesson}>Find the handshake and application reply in Wireshark</a></p>
+  </section>
 
-      <section id="tcp" aria-labelledby="tcp-heading">
-        <div class="section-heading">
-          <h2 id="tcp-heading">Send a file over TCP</h2>
-          <p>Think of a file with a label and a receipt. The client sends the label and file, then the server sends the receipt back.</p>
-        </div>
-        <ol class="tcp-steps">
-          {tcpTransfer.map(([title, detail], index) => (
-            <li>
-              <span class="number" aria-hidden="true">{index + 1}</span>
-              <div><h3>{title}</h3><p>{detail}</p></div>
-            </li>
-          ))}
-        </ol>
-        <div class="note">
-          <h3>Two confirmations</h3>
-          <p>A TCP <a href="#ack">ACK</a> confirms that the receiving computer’s TCP stack got the bytes. The file transfer program’s <a href="#file-verdict">OK</a> confirms that the saved file passed the <a href="#sha-256">SHA-256</a> check.</p>
-        </div>
-        <div class="lesson">
-          <h3>Watch TCP open, recover, and close</h3>
-          <p>Follow the <a href="#handshake">handshake</a>, then watch TCP fill a gap in its <a href="#byte-stream">byte stream</a>. See how both sides use <a href="#fin">FIN</a> to finish sending.</p>
-          <PacketStepper label="TCP connection and recovery animation" steps={tcpSteps} sender="Client" receiver="Server" />
-        </div>
-      </section>
+  <section id="udp" aria-labelledby="udp-heading">
+    <div class="section-heading">
+      <h2 id="udp-heading">Send messages over UDP</h2>
+      <p><a href="#udp-definition">UDP</a> sends each message as a <a href="#datagram">datagram</a>. See how <a href="#packet-loss">loss</a> and <a href="#reordering">reordering</a> affect what reaches the receiving program.</p>
+    </div>
+    <h3 class="demo-heading">Watch datagrams arrive</h3>
+    <p class="demo-instructions">Step through the sends and watch the receiver’s arrival list. Pause when #3 arrives and predict what the receiving program can read.</p>
+    <PacketStepper label="UDP loss and reordering animation" steps={udpSteps} />
+    <KnowledgeCheck
+      id="check-udp-arrival"
+      question="Datagram #3 arrives while #2 is still in transit. Which datagram can the UDP application read now?"
+      choices={[
+        { label: "Datagram #3", correct: true, feedback: "UDP delivers each datagram independently. The application can decide whether to use it now or wait for the missing number." },
+        { label: "Neither. UDP waits for #2 first.", feedback: "An application can enforce its own order, but UDP itself delivers #3 when it arrives." },
+      ]}
+    />
+    <div class="lesson" id="udp-recovery">
+      <h3>Recover a missing UDP chunk</h3>
+      <p>Illustration of the coursework’s <a href="#selective-repeat">Selective Repeat</a> design. The file transfer program confirms individual chunks and uses a <a href="#timeout">timeout</a> to retry a missing chunk.</p>
+      <p>Step or play until <strong>ACK #2</strong> travels back. Check the two file slots, then explain why the program only resends #1.</p>
+      <PacketStepper label="UDP application recovery animation" steps={udpRecoverySteps} />
+    </div>
+    <WorkedExamples lesson="udp" />
+    <KnowledgeCheck
+      id="check-udp-integrity"
+      question="Explain the result. A file rebuilt in arrival order is the same size as the original, but its SHA-256 differs. What could have happened?"
+      choices={[
+        { label: "Some chunks were written in the wrong order.", correct: true, feedback: "Swapping chunks preserves their total length and changes the bytes’ positions, which changes the fingerprint." },
+        { label: "A successful send means the saved file is correct.", feedback: "The receiver’s reconstruction determines which bytes end up where. Compare the hashes to check the saved file." },
+        { label: "A hash comparison only checks the file size.", feedback: "SHA-256 uses the file’s contents, including the order of its bytes." },
+      ]}
+    />
+  </section>
 
-      <section id="udp" aria-labelledby="udp-heading">
-        <div class="section-heading">
-          <h2 id="udp-heading">Send messages over UDP</h2>
-          <p><a href="#udp-definition">UDP</a> sends each message as a <a href="#datagram">datagram</a>. See how <a href="#packet-loss">loss</a> and <a href="#reordering">reordering</a> affect what reaches the receiving program.</p>
-        </div>
-        <h3 class="demo-heading">Watch datagrams arrive</h3>
-        <PacketStepper label="UDP loss and reordering animation" steps={udpSteps} />
-        <div class="lesson" id="udp-recovery">
-          <h3>Recover a missing UDP chunk</h3>
-          <p>Illustration of the coursework’s <a href="#selective-repeat">Selective Repeat</a> design. The file transfer program confirms individual chunks and uses a <a href="#timeout">timeout</a> to retry a missing chunk.</p>
-          <PacketStepper label="UDP application recovery animation" steps={udpRecoverySteps} />
-        </div>
-      </section>
-
-      <Assignment />
-      <Glossary />
-    </main>
-
-    <footer class="wrap">
-      <a href="https://github.com/GadDev/binfo-networks-final-project">Coursework code and results</a>
-      <a href="https://www.rfc-editor.org/rfc/rfc9293.html">TCP specification</a>
-      <a href="https://www.rfc-editor.org/rfc/rfc768.html">UDP specification</a>
-    </footer>
-  </body>
-</html>
+  <Assignment />
+  <Glossary />
+</CourseLayout>
