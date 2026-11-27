@@ -1,5 +1,6 @@
-"""Receive one small file over TCP on this computer."""
+"""Receive one small file over TCP. Defaults to this computer only."""
 
+import argparse
 import hashlib
 import socket
 import struct
@@ -23,11 +24,15 @@ def read_exact(connection, size):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--host", default=ADDRESS[0], help="IPv4 address to listen on")
+    args = parser.parse_args()
+    address = (args.host, ADDRESS[1])
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
         listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        listener.bind(ADDRESS)
+        listener.bind(address)
         listener.listen(1)
-        print("Waiting on 127.0.0.1:5001", flush=True)
+        print(f"Waiting on {address[0]}:{address[1]}", flush=True)
 
         connection, _ = listener.accept()
         with connection:
