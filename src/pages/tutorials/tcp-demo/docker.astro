@@ -1,0 +1,89 @@
+---
+import DemoLessonLayout from "../../../layouts/DemoLessonLayout.astro";
+const createFile =
+  'python3 -c \'from pathlib import Path; Path("hello.txt").write_bytes(b"HELLO")\'';
+const dockerServer =
+  "docker run --rm --name tcp-demo-server --network tcp-demo \\\n" +
+  '  --mount "type=bind,src=$PWD,dst=/lesson" -w /lesson python:3.12-slim \\\n' +
+  "  python -u server.py --host 0.0.0.0";
+const dockerClient =
+  "docker run --rm --network tcp-demo \\\n" +
+  '  --mount "type=bind,src=$PWD,dst=/lesson,readonly" -w /lesson python:3.12-slim \\\n' +
+  "  python client.py hello.txt --host tcp-demo-server";
+---
+
+<DemoLessonLayout
+  title="Connect two Docker containers"
+  description="Send the same sample from a client container to a server container by name."
+  downloads
+  next={{
+    path: "tutorials/tcp-demo/client-dashboard/",
+    label: "Plan a client and dashboard",
+  }}
+>
+  <section class="lab-section" aria-labelledby="docker-setup">
+    <div class="section-heading">
+      <h2 id="docker-setup">Run both containers</h2>
+      <p>
+        Start Docker first. Use a terminal that supports Bash-style quoting and
+        save the two downloads in a dedicated demo folder.
+      </p>
+    </div>
+    <p>
+      In the folder with both scripts, pull the image before the demo. This
+      exercise creates a dedicated Docker network. Rename any existing
+      <code>received-file.bin</code> in the folder before starting.
+    </p>
+    <pre class="lab-code"><code>{createFile + "\ndocker pull python:3.12-slim\ndocker network create tcp-demo"}</code></pre>
+    <p>Start the server container in one terminal.</p>
+    <pre
+      class="lab-code"
+      tabindex="0"
+      aria-label="Docker server command"
+    ><code>{dockerServer}</code></pre>
+    <p>
+      In the second terminal, send the file to the server container by name.
+    </p>
+    <pre
+      class="lab-code"
+      tabindex="0"
+      aria-label="Docker client command"
+    ><code>{dockerClient}</code></pre>
+    <p>
+      The received file appears in your working folder. Both containers share
+      the Docker network, so they can talk without publishing a host port. To
+      reach the server from the host, publish its port to loopback with{" "}
+      <code>-p 127.0.0.1:5001:5001</code> before the image name in the server
+      command. The server container exits after one transfer. When finished, run
+      <code>docker network rm tcp-demo</code>.
+      <a href="https://docs.docker.com/engine/network/drivers/bridge/">
+        Docker bridge networking
+      </a>
+    </p>
+
+    <details>
+      <summary>Read the Docker command</summary>
+      <ul class="lab-steps">
+        <li>
+          <code>--network tcp-demo</code> puts both containers on a bridge where
+          the client can resolve <code>tcp-demo-server</code> by name.
+        </li>
+        <li>
+          <code>--host 0.0.0.0</code> makes the Python server listen on the
+          container's network interfaces. Loopback in a container only reaches
+          that same container.
+        </li>
+        <li>
+          <code>--mount</code> lets the container see your demo folder. The
+          client mounts it read-only. The server writes the received file there
+          so you can inspect it after the container exits.
+        </li>
+      </ul>
+    </details>
+    <p>
+      <strong>Check your work.</strong> Wait for the server to listen before
+      running the client. Check its OK reply and find{" "}
+      <code>received-file.bin</code> on the host.
+    </p>
+  </section>
+</DemoLessonLayout>

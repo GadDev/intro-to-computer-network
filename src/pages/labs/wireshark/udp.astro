@@ -1,0 +1,265 @@
+---
+import KnowledgeCheck from "../../../components/KnowledgeCheck.astro";
+import LoopbackCapture from "../../../components/LoopbackCapture.astro";
+import CourseLayout from "../../../layouts/CourseLayout.astro";
+
+const home = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const frames = [
+  {
+    number: 1,
+    source: 40001,
+    destination: 5002,
+    message: "PING",
+    length: 12,
+    meaning: "The client sends a four-byte message.",
+  },
+  {
+    number: 2,
+    source: 5002,
+    destination: 40001,
+    message: "PONG",
+    length: 12,
+    meaning: "The server program sends a four-byte reply.",
+  },
+  {
+    number: 3,
+    source: 40001,
+    destination: 5002,
+    message: "BYE",
+    length: 11,
+    meaning:
+      "The client sends three more bytes. The exercise sends no reply to BYE.",
+  },
+];
+---
+
+<CourseLayout
+  page="wireshark"
+  title="Wireshark UDP lab | Computer Networks"
+  description="Read a UDP capture, identify the two endpoints, and tell application replies apart from transport behavior."
+>
+  <div class="intro lab-intro">
+    <p class="eyebrow">Wireshark lab · UDP</p>
+    <h1>
+      Read a <span>UDP capture</span>
+    </h1>
+    <p>
+      Follow three datagrams on loopback. Find the reply the server program
+      chose to send and the message it received without replying.
+    </p>
+    <div class="intro-links">
+      <a
+        class="button primary"
+        href={home + "captures/udp-hello.pcap"}
+        download
+      >
+        Download the UDP capture
+      </a>
+      <a class="button" href="#live-capture">
+        Capture your own UDP traffic
+      </a>
+      <a class="button" href={home + "labs/wireshark/"}>
+        Read the TCP lab
+      </a>
+    </div>
+  </div>
+
+  <section class="lab-section" aria-labelledby="udp-open">
+    <div class="section-heading">
+      <h2 id="udp-open">Open and filter the sample</h2>
+      <p>
+        The teaching capture models the same messages as the downloadable
+        practice script. Its timestamps are illustrative.
+      </p>
+    </div>
+    <ol class="lab-steps">
+      <li>
+        <strong>File → Open.</strong> Open <code>udp-hello.pcap</code>.
+      </li>
+      <li>
+        <strong>Show both directions.</strong> Enter{" "}
+        <code>udp.port == 5002</code> in the display filter bar. You should see
+        all three frames.
+      </li>
+      <li>
+        <strong>Show the messages sent to the server.</strong> Change the filter
+        to <code>udp.dstport == 5002</code>. Frames 1 and 3 remain. Use{" "}
+        <code>udp.srcport == 5002</code> to see the server reply.
+      </li>
+      <li>
+        <strong>Focus on one conversation.</strong> Restore the two-way filter,
+        select a frame, then choose <strong>Follow → UDP Stream</strong>.
+        Wireshark groups the exchange even though UDP establishes no transport
+        connection. For this sample, use <code>udp.stream == 0</code> to show
+        the conversation again. Use the packet list to see each datagram
+        boundary.
+      </li>
+    </ol>
+  </section>
+
+  <section class="lab-section" aria-labelledby="udp-frames">
+    <div class="section-heading">
+      <h2 id="udp-frames">Read the datagram fields</h2>
+      <p>
+        Expand <strong>User Datagram Protocol</strong> in Packet Details. The IP
+        addresses are both <code>127.0.0.1</code>. The source and destination
+        ports tell you which program sent each message.
+      </p>
+    </div>
+    <p class="table-hint">Scroll the table sideways to see every column.</p>
+    <div
+      class="table-scroll"
+      tabindex="0"
+      role="region"
+      aria-label="Captured UDP datagrams"
+    >
+      <table class="comparison-table reliability-table">
+        <caption>
+          UDP exchange between client port 40001 and server port 5002
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Frame</th>
+            <th scope="col">Source port</th>
+            <th scope="col">Destination port</th>
+            <th scope="col">UDP Length</th>
+            <th scope="col">Payload</th>
+            <th scope="col">What happened</th>
+          </tr>
+        </thead>
+        <tbody>
+          {frames.map(
+            ({ number, source, destination, length, message, meaning }) => (
+              <tr>
+                <th scope="row">{number}</th>
+                <td>{source}</td>
+                <td>{destination}</td>
+                <td>{length}</td>
+                <td>
+                  <code>{message}</code>
+                </td>
+                <td>{meaning}</td>
+              </tr>
+            ),
+          )}
+        </tbody>
+      </table>
+    </div>
+    <ul class="lab-steps">
+      <li>
+        <strong>Length.</strong> UDP Length counts the eight-byte UDP header as
+        well as the payload. A length of 12 means four bytes of application
+        data.
+      </li>
+      <li>
+        <strong>Payload.</strong> Select the UDP payload or Data entry to
+        highlight the bytes. Look for <code>PONG</code> in the ASCII portion of
+        Packet Bytes for frame 2.
+      </li>
+      <li>
+        <strong>Replies.</strong> The practice server sends PONG in response to
+        PING. UDP itself has no handshake, ACK, sequence number, or automatic
+        retry. Use your program’s logs to tell intentional silence from a
+        message that never arrived.
+      </li>
+    </ul>
+    <KnowledgeCheck
+      id="check-udp-capture-length"
+      question="A UDP frame shows Length 11. How many bytes are application data?"
+      choices={[
+        {
+          label: "3 bytes",
+          correct: true,
+          feedback:
+            "Subtract the eight-byte UDP header. In frame 3 the data is BYE.",
+        },
+        {
+          label: "11 bytes",
+          feedback:
+            "UDP Length includes the header. Check the payload separately.",
+        },
+      ]}
+    />
+    <KnowledgeCheck
+      id="check-udp-capture-silence"
+      question="What can you conclude when a captured UDP request has no visible reply?"
+      choices={[
+        {
+          label: "UDP guarantees the request was delivered.",
+          feedback:
+            "UDP provides no delivery confirmation. Check the receiver or its logs.",
+        },
+        {
+          label:
+            "The capture shows no reply. More evidence is needed to explain why.",
+          correct: true,
+          feedback:
+            "The program may have chosen silence, a datagram may have been lost, or your capture may have missed it. In this exercise the server log confirms receipt of BYE.",
+        },
+      ]}
+    />
+  </section>
+
+  <LoopbackCapture protocol="udp" port={5002}>
+    <p>
+      Download{" "}
+      <a href={home + "examples/udp/hello.py"} download>
+        hello.py
+      </a>
+      . With the capture running, open a terminal in the download folder and run
+      <code>python3 hello.py</code>. The terminal confirms that the server
+      receives both PING and BYE, and that the client receives PONG.
+    </p>
+  </LoopbackCapture>
+
+  <section class="lab-section" aria-labelledby="udp-check">
+    <h2 id="udp-check">Troubleshoot a missing datagram or reply</h2>
+    <ul class="lab-steps">
+      <li>
+        <strong>No UDP rows.</strong> Look for the script’s terminal output
+        first. Clear the display filter and check that you started on the
+        loopback interface before the script ran.
+      </li>
+      <li>
+        <strong>Only requests appear.</strong> If you used{" "}
+        <code>udp.dstport == 5002</code>, switch back to{" "}
+        <code>udp.port == 5002</code> to see replies.
+      </li>
+      <li>
+        <strong>The sender says it sent a message.</strong> Compare with the
+        receiver’s log. In this example, the receiver prints BYE and
+        intentionally sends no reply. A capture from the sending side alone
+        cannot confirm receipt.
+      </li>
+    </ul>
+  </section>
+
+  <section class="lab-section" aria-labelledby="udp-next">
+    <h2 id="udp-next">Compare it with TCP</h2>
+    <p>
+      Open the TCP sample alongside this one. First compare how each exchange
+      starts. Then compare a TCP ACK with the PONG text carried inside a UDP
+      datagram.
+    </p>
+    <div class="intro-links">
+      <a class="button primary" href={home + "labs/wireshark/"}>
+        Read the TCP lab
+      </a>
+      <a class="button" href={home + "#udp"}>
+        Review UDP basics
+      </a>
+    </div>
+    <ul class="lab-steps">
+      <li>
+        <a href="https://www.wireshark.org/docs/dfref/u/udp.html">
+          Wireshark UDP display filter fields
+        </a>
+      </li>
+      <li>
+        <a href="https://www.rfc-editor.org/rfc/rfc768.html">
+          RFC 768 · UDP header and length
+        </a>
+      </li>
+    </ul>
+  </section>
+</CourseLayout>

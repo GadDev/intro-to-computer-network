@@ -1,0 +1,71 @@
+---
+import DemoLessonLayout from "../../../layouts/DemoLessonLayout.astro";
+---
+
+<DemoLessonLayout
+  title="Plan a client and dashboard"
+  description="Design a file picker, a Send button, and an activity view driven by the server’s real output."
+  next={{
+    path: "tutorials/tcp-demo/private-server/",
+    label: "Explore private hosting",
+  }}
+>
+  <section class="lab-section" aria-labelledby="client-dashboard">
+    <div class="section-heading">
+      <h2 id="client-dashboard" tabindex="-1">
+        Choose what the app should show
+      </h2>
+      <p>
+        Keep the TCP transfer and improve how you start it and read the result.
+      </p>
+    </div>
+    <ul class="lab-steps">
+      <li>
+        <strong>Desktop client.</strong> Try{" "}
+        <a href="https://docs.python.org/3/library/tkinter.html">Tkinter</a>
+        for a file picker, a destination field, and a Send button. Run the
+        teaching client in a background process and show its real success or
+        error output.
+      </li>
+      <li>
+        <strong>Local activity dashboard.</strong> Start with the server
+        terminal. To build a page that updates on its own, first add structured
+        events for connection, received bytes, duration, and verdict. The
+        teaching server prints a waiting line and final byte count. Each
+        additional metric needs to be recorded by your code.
+      </li>
+      <li>
+        <strong>Browser client.</strong> A normal web page uploads to a local
+        HTTP bridge such as{" "}
+        <a href="https://fastapi.tiangolo.com/tutorial/request-files/">
+          FastAPI
+        </a>
+        . The bridge then opens a separate raw TCP connection to the teaching
+        server. Treat that integration as its own project.
+      </li>
+    </ul>
+    <h3>Trace where the result comes from</h3>
+    <ol class="lab-steps">
+      <li>
+        Start by showing only the final server message. The teaching scripts
+        already print the filename of the received copy, the number of bytes,
+        and the final reply.
+      </li>
+      <li>
+        Add a timestamp when the server accepts a connection and record a second
+        timestamp after the file is saved. Label the difference as your
+        application’s accept-to-save time.
+      </li>
+      <li>
+        If you want to show progress, record the number of payload bytes as the
+        server reads them. Use a larger practice file within the lab’s 1 MiB
+        limit. A five-byte send may finish before the page can repaint.
+      </li>
+    </ol>
+    <p>
+      <strong>Check your work.</strong> A successful send should show the same
+      received byte count and verdict in the client and the server view. A
+      stopped server should show a fresh error instead of the previous result.
+    </p>
+  </section>
+</DemoLessonLayout>

@@ -1,5 +1,6 @@
 ---
 import KnowledgeCheck from "../../components/KnowledgeCheck.astro";
+import LoopbackCapture from "../../components/LoopbackCapture.astro";
 import CourseLayout from "../../layouts/CourseLayout.astro";
 
 const home = import.meta.env.BASE_URL.replace(/\/?$/, "/");
@@ -66,11 +67,11 @@ const frames = [
 
 <CourseLayout
   page="wireshark"
-  title="Wireshark lab | Computer Networks"
+  title="Wireshark TCP lab | Computer Networks"
   description="Read a nine-frame TCP capture and identify the handshake, payload, acknowledgement, and close."
 >
   <div class="intro lab-intro">
-    <p class="eyebrow">Wireshark lab</p>
+    <p class="eyebrow">Wireshark lab · TCP</p>
     <h1>
       Read a <span>TCP capture</span>
     </h1>
@@ -89,6 +90,12 @@ const frames = [
       <a class="button" href="#frame-guide">
         Read the captured frames
       </a>
+      <a class="button" href="#live-capture">
+        Capture your own TCP traffic
+      </a>
+      <a class="button" href={home + "labs/wireshark/udp/"}>
+        Read the UDP lab
+      </a>
     </div>
   </div>
 
@@ -101,7 +108,7 @@ const frames = [
         <a href={`${home}#loopback`}>loopback</a> link. The client sends{" "}
         <code>HELLO</code> from port <code>40000</code>. The server on port{" "}
         <code>5001</code> compares those bytes with the expected message and
-        replies <code>OK</code>. In the coursework, the file program performs a{" "}
+        replies <code>OK</code>. The public Python file-transfer lab performs a{" "}
         <a href={`${home}#sha-256`}>SHA-256 check</a> before replying.
       </p>
     </div>
@@ -126,6 +133,25 @@ const frames = [
         <code>tcp.stream == 0</code> before reading the full exchange.
       </li>
     </ol>
+    <details>
+      <summary>Find your way around the three panes</summary>
+      <ul class="lab-steps">
+        <li>
+          <strong>Packet List.</strong> Each row shows a captured frame. Start
+          with frame number, time, direction, and the Info column.
+        </li>
+        <li>
+          <strong>Packet Details.</strong> Expand Internet Protocol to find IP
+          addresses and Transmission Control Protocol for ports, flags, and
+          sequence numbers.
+        </li>
+        <li>
+          <strong>Packet Bytes.</strong> Click a field to highlight its bytes.
+          The ASCII column is handy when the payload contains text such as
+          HELLO.
+        </li>
+      </ul>
+    </details>
   </section>
 
   <section aria-labelledby="frame-guide" class="lab-section">
@@ -246,15 +272,72 @@ const frames = [
     <div class="lesson-next">
       <div>
         <h3>Apply what you learned</h3>
-        <p>Use the assignment guide to plan your own TCP and UDP transfers.</p>
+        <p>Compare the TCP exchange with individual UDP datagrams.</p>
       </div>
-      <a class="button primary" href={`${home}#assignment`}>
-        Open the assignment guide
+      <a class="button primary" href={home + "labs/wireshark/udp/"}>
+        Read the UDP lab
       </a>
       <a class="button" href={`${home}#tcp`}>
         Return to TCP
       </a>
     </div>
+  </section>
+
+  <LoopbackCapture protocol="tcp" port={5001}>
+    <p>
+      Prepare the scripts from the{" "}
+      <a href={home + "tutorials/tcp-demo/loopback/"}>one-laptop TCP demo</a>.
+      With the capture running, start the server and send HELLO. Your trace
+      carries a 40-byte file header, five file bytes, and a one-byte application
+      receipt. TCP can split or combine these writes, so the frame count and
+      sequence numbers can differ from the nine-frame practice file.
+    </p>
+  </LoopbackCapture>
+
+  <section class="lab-section" aria-labelledby="tcp-troubleshoot">
+    <div class="section-heading">
+      <h2 id="tcp-troubleshoot">What to look for when a transfer fails</h2>
+      <p>
+        Start with the connection setup, then check data in both directions.
+        These patterns help you decide what to check next.
+      </p>
+    </div>
+    <ul class="lab-steps">
+      <li>
+        <strong>No matching rows.</strong> Clear the display filter. Check the
+        capture interface and port, then start a fresh capture before the client
+        connects.
+      </li>
+      <li>
+        <strong>Repeated SYN with no SYN + ACK.</strong> Verify the address and
+        port and check that you can see both directions from your capture point.
+        Check the server listener and any firewall on the practice network.
+      </li>
+      <li>
+        <strong>RST during setup.</strong> Try <code>tcp.flags.reset == 1</code>{" "}
+        and check who sent the reset. A SYN followed by a reset is consistent
+        with a refused connection. Check the server’s listening port.
+      </li>
+      <li>
+        <strong>Retransmission or duplicate ACK.</strong> Try{" "}
+        <code>
+          tcp.analysis.retransmission || tcp.analysis.fast_retransmission
+        </code>{" "}
+        or <code>tcp.analysis.duplicate_ack</code>. These are Wireshark
+        annotations based on the frames it saw. Compare sequence ranges and
+        timings before drawing conclusions about loss.
+      </li>
+      <li>
+        <strong>TCP works, but the client gets no OK.</strong> Follow the stream
+        and check the server terminal. ACK numbers track the byte stream. The
+        file verdict comes from the program after it checks and saves the file.
+      </li>
+    </ul>
+    <p>
+      <a href="https://www.wireshark.org/docs/wsug_html_chunked/ChAdvTCPAnalysis.html">
+        How Wireshark analyzes TCP
+      </a>
+    </p>
   </section>
 
   <section aria-labelledby="sources-heading" class="lab-section">

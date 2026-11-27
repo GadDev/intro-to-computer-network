@@ -657,6 +657,9 @@ summary {
   color: var(--blue);
   text-underline-offset: 0.22em;
 }
+.lab-steps :not(pre) > code {
+  overflow-wrap: anywhere;
+}
 .lab-code {
   overflow: auto;
   max-height: 28rem;

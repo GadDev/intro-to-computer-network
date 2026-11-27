@@ -1,0 +1,48 @@
+---
+import CourseLayout from "./CourseLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  downloads?: boolean;
+  next: { path: string; label: string };
+}
+
+const { title, description, downloads = false, next } = Astro.props;
+const home = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const series = home + "tutorials/tcp-demo/";
+const examples = home + "examples/tcp/";
+---
+
+<CourseLayout
+  page="tcp-demo"
+  title={title + " | TCP demo tutorials"}
+  description={description}
+>
+  <div class="intro lab-intro">
+    <a class="eyebrow" href={series}>
+      Demo tutorials
+    </a>
+    <h1>{title}</h1>
+    <p>{description}</p>
+    {downloads && (
+      <div class="intro-links">
+        <a class="button" href={examples + "server.py"} download>
+          Download server.py
+        </a>
+        <a class="button" href={examples + "client.py"} download>
+          Download client.py
+        </a>
+      </div>
+    )}
+  </div>
+  <slot />
+  <div class="lesson-next">
+    <a class="button primary" href={home + next.path}>
+      {next.label}
+    </a>
+    <a class="button" href={series}>
+      All demo tutorials
+    </a>
+  </div>
+</CourseLayout>

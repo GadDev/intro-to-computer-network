@@ -1,0 +1,73 @@
+---
+import DemoLessonLayout from "../../../layouts/DemoLessonLayout.astro";
+const createFile =
+  'python3 -c \'from pathlib import Path; Path("hello.txt").write_bytes(b"HELLO")\'';
+---
+
+<DemoLessonLayout
+  title="Connect two laptops on a hotspot"
+  description="Use the same phone hotspot for both laptops and find the server by its assigned IPv4 address."
+  downloads
+  next={{ path: "tutorials/tcp-demo/docker/", label: "Try Docker" }}
+>
+  <section class="lab-section" aria-labelledby="hotspot-docker">
+    <div class="section-heading">
+      <h2 id="hotspot-docker" tabindex="-1">
+        Set up both laptops
+      </h2>
+      <p>Use Python 3 and the lab scripts in a fresh folder on each laptop.</p>
+    </div>
+    <h3>Two laptops on one phone hotspot</h3>
+    <ol class="lab-steps">
+      <li>
+        Join both laptops to the <strong>same phone hotspot</strong>. Save the
+        scripts on their respective laptops before the rehearsal. Use a
+        synthetic practice file such as HELLO.
+      </li>
+      <li>
+        Find the server <em>laptop’s</em> IPv4 address in its Wi-Fi settings,
+        then replace the placeholder below in both commands. Use the laptop’s
+        address on the hotspot rather than the phone’s gateway address.
+      </li>
+      <li>
+        On the server laptop, allow the connection on this network if the local
+        firewall prompts you. Start the server and wait for its waiting message.
+        <pre class="lab-code"><code>python3 server.py --host SERVER_LAPTOP_IP</code></pre>
+      </li>
+      <li>
+        On the client laptop, create the sample and send it.
+        <pre class="lab-code"><code>{createFile + "\npython3 client.py hello.txt --host SERVER_LAPTOP_IP"}</code></pre>
+      </li>
+    </ol>
+    <p>
+      Rehearse with the actual phone and laptops. The file crosses your local
+      hotspot network. If the laptops cannot reach each other, recheck the
+      server’s assigned IP and use the one-laptop demo if needed.
+    </p>
+    <details>
+      <summary>What to check if the client cannot connect</summary>
+      <ul class="lab-steps">
+        <li>
+          <strong>No waiting message.</strong> Check the server IP against the
+          address of the Wi‑Fi interface. A hotspot can assign a different
+          address when you reconnect.
+        </li>
+        <li>
+          <strong>Connection refused.</strong> Start the server first and check
+          that its terminal says it is waiting on port 5001. It exits after each
+          transfer.
+        </li>
+        <li>
+          <strong>Connection times out.</strong> Check both devices are on the
+          same hotspot and are allowed to reach each other. Check the server's
+          firewall for that network. If the hotspot isolates devices, rehearse
+          on one laptop.
+        </li>
+      </ul>
+    </details>
+    <p>
+      <strong>Check your work.</strong> The client prints OK and the copy
+      appears on the server laptop. Rename the copy before the next rehearsal.
+    </p>
+  </section>
+</DemoLessonLayout>
