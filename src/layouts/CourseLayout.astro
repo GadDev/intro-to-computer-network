@@ -13,6 +13,7 @@ const { title, description, page } = Astro.props;
 const home = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const course = page === "course" ? "" : home;
 const lab = `${home}labs/wireshark/`;
+const year = new Date().getFullYear().toString();
 ---
 
 <!doctype html>
@@ -144,6 +145,25 @@ const lab = `${home}labs/wireshark/`;
           UDP specification
         </a>
       </nav>
+      <div class="footer-credit">
+        <p>
+          ©{" "}
+          <time datetime={year} data-footer-year>
+            {year}
+          </time>{" "}
+          <a href="https://github.com/GadDev">Iskender</a>
+        </p>
+        <p>Made with love in Luxembourg</p>
+      </div>
     </footer>
+    <script>
+      const year =
+        document.querySelector<HTMLTimeElement>("[data-footer-year]");
+      if (year) {
+        const currentYear = new Date().getFullYear().toString();
+        year.dateTime = currentYear;
+        year.textContent = currentYear;
+      }
+    </script>
   </body>
 </html>
