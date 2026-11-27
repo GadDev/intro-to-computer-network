@@ -393,6 +393,14 @@ summary { cursor: pointer; font-weight: 650; }
 .lab-steps { max-width: 76ch; padding-left: 1.4rem; margin-block: 1.15rem; }
 .lab-steps li + li { margin-top: .65rem; }
 .lab-steps a { color: var(--blue); text-underline-offset: .22em; }
+.lab-code {
+  overflow: auto;
+  max-height: 28rem;
+  padding: .8rem 1rem;
+  border: 1px solid var(--edge);
+  border-radius: .55rem;
+  background: var(--background);
+}
 
 .knowledge-check {
   display: block;
