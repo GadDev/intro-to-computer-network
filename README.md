@@ -8,6 +8,8 @@ The Wireshark lab at `/labs/wireshark/` includes a downloadable nine-frame captu
 
 The Python lab at `/labs/tcp-file-transfer/` walks through a local transfer using downloadable client and server scripts. It explains the TCP stream, exact-length reads, and the application's file receipt.
 
+The demo series at `/tutorials/tcp-demo/` uses the teaching scripts for a two-minute rehearsal, a phone-hotspot or Docker transfer, and follow-up projects for a client and dashboard.
+
 The reliability comparison uses the [component catalog pattern](https://daily-ai-pulse-db253.web.app/guides/generative-ui-architecture-map/). A typed local lesson specification lists the comparison table and packet replays. Astro renders those approved components at build time. The lesson has no runtime model dependency and works offline.
 
 ## Run locally
@@ -33,4 +35,4 @@ The project includes [Grill Me and Grilling](https://github.com/mattpocock/skill
 - [Roadmap](docs/roadmap.md)
 - [Tech stack](docs/techstack.md)
 
-The animations are illustrative. Consult the [coursework repository](https://github.com/GadDev/binfo-networks-final-project) for the transfer programs and measured results.
+The animations are illustrative. The course examples are for practice.

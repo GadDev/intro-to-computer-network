@@ -2,7 +2,7 @@
 
 Planning draft · 24 November 2026 · Europe/Luxembourg
 
-The [course repository](https://github.com/GadDev/intro-to-computer-network) is empty. Fixed constraints are static course content, browser-side interactions and no database. The coursework transfer programs remain the source of real runs and evidence. See [constitution.md](constitution.md) and [roadmap.md](roadmap.md).
+Fixed constraints are static course content, browser-side interactions and no database. Use the public course examples for practice and record your own coursework results. See [constitution.md](constitution.md) and [roadmap.md](roadmap.md).
 
 ## Compare the course architectures
 
@@ -25,7 +25,7 @@ The site architecture remains **[OPEN]**. Resn's Zentry case study credits Nuxt/
 - **Vanilla TypeScript [ASSUMPTION — confirm].** Keep a fixed sequence of illustrated events and a small set of UI states for stepping, play, pause and reset. The same events produce the visible diagram caption and the static transcript. Use a quiz with explicit feedback when the lesson needs it. Consider React only when several interactions need the same complex state and repeated vanilla DOM wiring starts making them harder to maintain. [Astro scripts](https://docs.astro.build/en/guides/client-side-scripts/)
 - **Semantic HTML and CSS [ASSUMPTION — confirm].** Lay out the sender and receiver as stable lanes with text labels and arrows. Use short transitions for the packet or the current highlight. The event index controls what the learner sees, so stepping works even with motion disabled. Compare this with a scoped timeline for the signature scene below. [MDN reduced motion](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion)
 - **Local assets and static hosting [ASSUMPTION — confirm].** Build once, verify the intended deploy base path, then serve the output locally for an offline rehearsal. Keep the recording and PDF stills available as standalone files for the classroom route. GitHub Pages is a candidate public host. [Astro GitHub Pages](https://docs.astro.build/en/guides/deploy/github/)
-- **Wireshark and existing Python tools [ASSUMPTION — confirm].** Use Wireshark to inspect the controlled trace and the existing Python coursework to produce real transfer evidence. Store only approved excerpts and settings in the app. A browser interaction reads the illustrative event sequence or displays recorded evidence without needing to start the transfer program. [Wireshark user guide](https://www.wireshark.org/docs/wsug_html_chunked/ChWorkBuildDisplayFilterSection.html) · [Coursework README](https://github.com/GadDev/binfo-networks-final-project#how-to-run)
+- **Wireshark and existing Python tools [ASSUMPTION — confirm].** Use Wireshark to inspect the controlled trace and the existing Python coursework to produce real transfer evidence. Store only approved excerpts and settings in the app. A browser interaction reads the illustrative event sequence or displays recorded evidence without needing to start the transfer program. [Wireshark user guide](https://www.wireshark.org/docs/wsug_html_chunked/ChWorkBuildDisplayFilterSection.html)
 
 ## Zentry-inspired motion and prototype criteria
 
