@@ -9,27 +9,74 @@ const { lesson } = Astro.props;
 {lesson === "tcp" ? (
   <div class="lesson">
     <h3>Worked example · Read a TCP ACK</h3>
-    <p>Suppose the first byte of a sample message is numbered <code>1</code> and the server receives five bytes in order.</p>
+    <p>
+      Suppose the first byte of a sample message is numbered <code>1</code> and
+      the server receives five bytes in order.
+    </p>
     <figure class="worked-diagram">
       <table>
         <caption>TCP byte numbers and the acknowledgement</caption>
-        <thead><tr><th scope="col">Client sends</th><th scope="col">Server replies</th></tr></thead>
-        <tbody><tr><td>Bytes <code>1–5</code></td><td><code>ACK 6</code></td></tr></tbody>
+        <thead>
+          <tr>
+            <th scope="col">Client sends</th>
+            <th scope="col">Server replies</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Bytes <code>1–5</code>
+            </td>
+            <td>
+              <code>ACK 6</code>
+            </td>
+          </tr>
+        </tbody>
       </table>
-      <figcaption><code>ACK 6</code> means “I have everything through byte 5 and expect byte 6 next.” The file transfer program sends its own verdict after it checks the saved file.</figcaption>
+      <figcaption>
+        <code>ACK 6</code> means “I have everything through byte 5 and expect
+        byte 6 next.” The file transfer program sends its own verdict after it
+        checks the saved file.
+      </figcaption>
     </figure>
   </div>
 ) : (
   <div class="lesson">
     <h3>Worked example · Restore the original order</h3>
-    <p>Imagine the sender puts <code>A</code>, <code>B</code>, and <code>C</code> in chunks numbered <code>1</code>, <code>2</code>, and <code>3</code>. Chunk <code>2</code> is delayed.</p>
+    <p>
+      Imagine the sender puts <code>A</code>, <code>B</code>, and <code>C</code>{" "}
+      in chunks numbered <code>1</code>, <code>2</code>, and <code>3</code>.
+      Chunk <code>2</code> is delayed.
+    </p>
     <figure class="worked-diagram">
       <table>
         <caption>One UDP arrival order, two ways to write the file</caption>
-        <thead><tr><th scope="col">Arrivals</th><th scope="col">Append on arrival</th><th scope="col">Write by chunk number</th></tr></thead>
-        <tbody><tr><td><code>1 → 3 → 2</code></td><td><code>ACB</code></td><td><code>ABC</code></td></tr></tbody>
+        <thead>
+          <tr>
+            <th scope="col">Arrivals</th>
+            <th scope="col">Append on arrival</th>
+            <th scope="col">Write by chunk number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>1 → 3 → 2</code>
+            </td>
+            <td>
+              <code>ACB</code>
+            </td>
+            <td>
+              <code>ABC</code>
+            </td>
+          </tr>
+        </tbody>
       </table>
-      <figcaption>Both outputs have three bytes. Only <code>ABC</code> matches the original. The application uses the chunk numbers to write each byte in its original position.</figcaption>
+      <figcaption>
+        Both outputs have three bytes. Only <code>ABC</code> matches the
+        original. The application uses the chunk numbers to write each byte in
+        its original position.
+      </figcaption>
     </figure>
   </div>
 )}

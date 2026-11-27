@@ -3,48 +3,176 @@ const groups = [
   {
     title: "Sending data",
     terms: [
-      ["protocol", "Protocol", "A set of rules programs or computers follow to exchange information."],
-      ["client-server", "Client and server", "The client initiates a request or transfer. The server waits for incoming requests and responds."],
-      ["port", "Port", "A number TCP or UDP uses to direct incoming data to the right service on a computer."],
-      ["payload", "Payload", "The bytes carried inside a message. The header carries information used to handle those bytes."],
-      ["tcp-definition", "TCP", "Transmission Control Protocol. TCP opens a connection and gives the receiving program a reliable, ordered stream of bytes."],
-      ["udp-definition", "UDP", "User Datagram Protocol. UDP sends individual messages and leaves delivery guarantees and ordering to the application when it needs them."],
-      ["byte-stream", "Byte stream", "A continuous sequence of bytes. With TCP, the receiving program works out where its own messages or files begin and end."],
-      ["segment", "TCP segment", "One unit that TCP sends across the network. A segment can carry data, control flags, or both."],
-      ["datagram", "UDP datagram", "One message sent with UDP. UDP preserves the boundary between messages that arrive."],
+      [
+        "protocol",
+        "Protocol",
+        "A set of rules programs or computers follow to exchange information.",
+      ],
+      [
+        "client-server",
+        "Client and server",
+        "The client initiates a request or transfer. The server waits for incoming requests and responds.",
+      ],
+      [
+        "port",
+        "Port",
+        "A number TCP or UDP uses to direct incoming data to the right service on a computer.",
+      ],
+      [
+        "payload",
+        "Payload",
+        "The bytes carried inside a message. The header carries information used to handle those bytes.",
+      ],
+      [
+        "tcp-definition",
+        "TCP",
+        "Transmission Control Protocol. TCP opens a connection and gives the receiving program a reliable, ordered stream of bytes.",
+      ],
+      [
+        "udp-definition",
+        "UDP",
+        "User Datagram Protocol. UDP sends individual messages and leaves delivery guarantees and ordering to the application when it needs them.",
+      ],
+      [
+        "byte-stream",
+        "Byte stream",
+        "A continuous sequence of bytes. With TCP, the receiving program works out where its own messages or files begin and end.",
+      ],
+      [
+        "segment",
+        "TCP segment",
+        "One unit that TCP sends across the network. A segment can carry data, control flags, or both.",
+      ],
+      [
+        "datagram",
+        "UDP datagram",
+        "One message sent with UDP. UDP preserves the boundary between messages that arrive.",
+      ],
     ],
   },
   {
     title: "Reading a TCP exchange",
     terms: [
-      ["handshake", "Handshake", "The opening exchange that sets up a TCP connection. The usual order is SYN, SYN + ACK, then ACK."],
-      ["syn", "SYN", "The TCP flag used to announce a starting sequence number when opening a connection."],
-      ["ack", "ACK", "Short for acknowledgement. A TCP ACK gives the next byte number the receiver expects. In the UDP coursework, ACK #2 is an application message confirming chunk #2."],
-      ["fin", "FIN", "The TCP flag an endpoint uses to say it has finished sending. The other endpoint can still send until it closes its own sending side."],
-      ["sequence-number", "Sequence number", "A position marker. TCP numbers bytes in a stream. The coursework’s UDP program numbers file chunks."],
-      ["relative-sequence-number", "Relative sequence number", "Wireshark can subtract each side’s starting number so you can count from zero in each direction."],
-      ["frame", "Frame number", "The number Wireshark gives to a row in a capture. It counts captured records, while TCP sequence numbers count positions in a byte stream."],
-      ["display-filter", "Display filter", "A rule that controls which rows Wireshark shows. The original packets stay in the capture file."],
-      ["tcp-stream", "TCP stream index", "A number Wireshark assigns to a TCP conversation in this capture. Use it to view both directions of that conversation together."],
-      ["loopback", "Loopback", "A local network path that lets a client and server talk on the same machine. The IPv4 loopback address in the lab is 127.0.0.1."],
+      [
+        "handshake",
+        "Handshake",
+        "The opening exchange that sets up a TCP connection. The usual order is SYN, SYN + ACK, then ACK.",
+      ],
+      [
+        "syn",
+        "SYN",
+        "The TCP flag used to announce a starting sequence number when opening a connection.",
+      ],
+      [
+        "ack",
+        "ACK",
+        "Short for acknowledgement. A TCP ACK gives the next byte number the receiver expects. In the UDP coursework, ACK #2 is an application message confirming chunk #2.",
+      ],
+      [
+        "fin",
+        "FIN",
+        "The TCP flag an endpoint uses to say it has finished sending. The other endpoint can still send until it closes its own sending side.",
+      ],
+      [
+        "sequence-number",
+        "Sequence number",
+        "A position marker. TCP numbers bytes in a stream. The coursework’s UDP program numbers file chunks.",
+      ],
+      [
+        "relative-sequence-number",
+        "Relative sequence number",
+        "Wireshark can subtract each side’s starting number so you can count from zero in each direction.",
+      ],
+      [
+        "frame",
+        "Frame number",
+        "The number Wireshark gives to a row in a capture. It counts captured records, while TCP sequence numbers count positions in a byte stream.",
+      ],
+      [
+        "display-filter",
+        "Display filter",
+        "A rule that controls which rows Wireshark shows. The original packets stay in the capture file.",
+      ],
+      [
+        "tcp-stream",
+        "TCP stream index",
+        "A number Wireshark assigns to a TCP conversation in this capture. Use it to view both directions of that conversation together.",
+      ],
+      [
+        "loopback",
+        "Loopback",
+        "A local network path that lets a client and server talk on the same machine. The IPv4 loopback address in the lab is 127.0.0.1.",
+      ],
     ],
   },
   {
     title: "Recovery and verification",
     terms: [
-      ["packet-loss", "Packet loss", "A packet is sent but fails to reach its destination."],
-      ["reordering", "Reordering", "Data arrives in a different order than it was sent. For example, datagram #3 arrives before #2."],
-      ["mtu", "MTU", "Maximum Transmission Unit. The largest IP packet a link can carry without splitting it into smaller pieces."],
-      ["receive-buffer", "Receive buffer", "Space the operating system uses to hold incoming data until the receiving program reads it."],
-      ["throughput", "Throughput", "How much data is transferred per unit of time. The coursework reports it in megabytes per second."],
-      ["timeout", "Timeout", "A time limit that triggers an action. In the UDP recovery example, the sender retries when it has waited too long for a chunk’s ACK."],
-      ["retransmission", "Retransmission", "Sending data again, for example when the original data or its acknowledgement may have been lost."],
-      ["send-window", "Send window", "The range of packet numbers the sender may transmit before waiting for more acknowledgements."],
-      ["cumulative-ack", "Cumulative ACK", "One acknowledgement that confirms receipt of all data up to a point, in order."],
-      ["selective-repeat", "Selective Repeat", "A recovery method that tracks individual chunks and resends only the chunks still missing an acknowledgement."],
-      ["crc32", "CRC32", "A checksum the UDP coursework uses to detect accidental changes to a datagram’s payload."],
-      ["sha-256", "SHA-256", "A hash algorithm that makes a fixed-length fingerprint of the file’s bytes. The coursework compares the original and saved fingerprints to check the file."],
-      ["file-verdict", "File verdict", "The file transfer program’s response after checking the saved file. It reports OK when the hashes match or MISMATCH when they differ."],
+      [
+        "packet-loss",
+        "Packet loss",
+        "A packet is sent but fails to reach its destination.",
+      ],
+      [
+        "reordering",
+        "Reordering",
+        "Data arrives in a different order than it was sent. For example, datagram #3 arrives before #2.",
+      ],
+      [
+        "mtu",
+        "MTU",
+        "Maximum Transmission Unit. The largest IP packet a link can carry without splitting it into smaller pieces.",
+      ],
+      [
+        "receive-buffer",
+        "Receive buffer",
+        "Space the operating system uses to hold incoming data until the receiving program reads it.",
+      ],
+      [
+        "throughput",
+        "Throughput",
+        "How much data is transferred per unit of time. The coursework reports it in megabytes per second.",
+      ],
+      [
+        "timeout",
+        "Timeout",
+        "A time limit that triggers an action. In the UDP recovery example, the sender retries when it has waited too long for a chunk’s ACK.",
+      ],
+      [
+        "retransmission",
+        "Retransmission",
+        "Sending data again, for example when the original data or its acknowledgement may have been lost.",
+      ],
+      [
+        "send-window",
+        "Send window",
+        "The range of packet numbers the sender may transmit before waiting for more acknowledgements.",
+      ],
+      [
+        "cumulative-ack",
+        "Cumulative ACK",
+        "One acknowledgement that confirms receipt of all data up to a point, in order.",
+      ],
+      [
+        "selective-repeat",
+        "Selective Repeat",
+        "A recovery method that tracks individual chunks and resends only the chunks still missing an acknowledgement.",
+      ],
+      [
+        "crc32",
+        "CRC32",
+        "A checksum the UDP coursework uses to detect accidental changes to a datagram’s payload.",
+      ],
+      [
+        "sha-256",
+        "SHA-256",
+        "A hash algorithm that makes a fixed-length fingerprint of the file’s bytes. The coursework compares the original and saved fingerprints to check the file.",
+      ],
+      [
+        "file-verdict",
+        "File verdict",
+        "The file transfer program’s response after checking the saved file. It reports OK when the hashes match or MISMATCH when they differ.",
+      ],
     ],
   },
 ];
@@ -53,7 +181,9 @@ const groups = [
 <section id="glossary" aria-labelledby="glossary-heading" tabindex="-1">
   <div class="section-heading">
     <h2 id="glossary-heading">Glossary</h2>
-    <p>Look up the terms used in the animations and file transfer walkthrough.</p>
+    <p>
+      Look up the terms used in the animations and file transfer walkthrough.
+    </p>
   </div>
   <div class="glossary-grid">
     {groups.map(({ title, terms }) => (
