@@ -11,7 +11,11 @@ interface Props {
 const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
 ---
 
-<packet-stepper role="group" aria-label={label} data-steps={JSON.stringify(steps)}>
+<packet-stepper
+  role="group"
+  aria-label={label}
+  data-steps={JSON.stringify(steps)}
+>
   <div class="interactive" data-interactive hidden>
     <div class="packet-stage" aria-hidden="true">
       <div class="endpoints">
@@ -23,10 +27,18 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
       </div>
     </div>
     <div class="controls" role="group" aria-label="Animation controls">
-      <button type="button" class="primary" data-next>Next step</button>
-      <button type="button" data-prev>Previous</button>
-      <button type="button" data-play>Play</button>
-      <button type="button" data-reset>Reset</button>
+      <button type="button" class="primary" data-next>
+        Next step
+      </button>
+      <button type="button" data-prev>
+        Previous
+      </button>
+      <button type="button" data-play>
+        Play
+      </button>
+      <button type="button" data-reset>
+        Reset
+      </button>
     </div>
     <div class="step-copy" role="status" aria-atomic="true">
       <div class="step-caption">
@@ -35,10 +47,14 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
         <p data-detail></p>
       </div>
       <div class="receiver-status">
-        <p><strong>{receiver}</strong> <span data-receiver></span></p>
+        <p>
+          <strong>{receiver}</strong> <span data-receiver></span>
+        </p>
         {steps[0].fileSlots && (
           <ul class="file-slots" aria-label="Receiver’s file">
-            {steps[0].fileSlots.map((_, position) => <li data-slot={position}></li>)}
+            {steps[0].fileSlots.map((_, position) => (
+              <li data-slot={position}></li>
+            ))}
           </ul>
         )}
       </div>
@@ -48,7 +64,11 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
   <details open>
     <summary>Read the full sequence</summary>
     <ol class="transcript">
-      {steps.map(({ title, detail }) => <li><strong>{title}.</strong> {detail}</li>)}
+      {steps.map(({ title, detail }) => (
+        <li>
+          <strong>{title}.</strong> {detail}
+        </li>
+      ))}
     </ol>
   </details>
 </packet-stepper>
@@ -61,7 +81,8 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
 
     connectedCallback() {
       const steps: PacketStep[] = JSON.parse(this.dataset.steps!);
-      const interactive = this.querySelector<HTMLElement>("[data-interactive]")!;
+      const interactive =
+        this.querySelector<HTMLElement>("[data-interactive]")!;
       const packet = this.querySelector<HTMLElement>("[data-packet]")!;
       const index = this.querySelector<HTMLElement>("[data-step-index]")!;
       const title = this.querySelector<HTMLElement>("[data-title]")!;
@@ -73,7 +94,9 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
       const play = this.querySelector<HTMLButtonElement>("[data-play]")!;
       const reset = this.querySelector<HTMLButtonElement>("[data-reset]")!;
       const transcript = this.querySelector<HTMLDetailsElement>("details")!;
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      );
       const listeners = new AbortController();
       const options = { signal: listeners.signal };
       const last = steps.length - 1;
@@ -95,7 +118,12 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
         packet.dataset.tone = event.tone;
         packet.textContent = event.label;
         packet.style.left = `${event.to}%`;
-        if (animate && !reducedMotion.matches && event.from !== event.to && packet.animate) {
+        if (
+          animate &&
+          !reducedMotion.matches &&
+          event.from !== event.to &&
+          packet.animate
+        ) {
           movement = packet.animate(
             [{ left: `${event.from}%` }, { left: `${event.to}%` }],
             { duration: 500, easing: "cubic-bezier(.2,.8,.2,1)" },
@@ -122,41 +150,61 @@ const { label, steps, sender = "Sender", receiver = "Receiver" } = Astro.props;
         if (step === last) stop();
       }
 
-      previous.addEventListener("click", () => {
-        if (step === 0) return;
-        stop();
-        step -= 1;
-        show();
-      }, options);
-      next.addEventListener("click", () => {
-        if (step === last) return;
-        stop();
-        advance();
-      }, options);
-      reset.addEventListener("click", () => {
-        stop();
-        step = 0;
-        show();
-      }, options);
-      play.addEventListener("click", () => {
-        if (timer !== undefined) {
+      previous.addEventListener(
+        "click",
+        () => {
+          if (step === 0) return;
           stop();
-          movement?.pause();
-          return;
-        }
-
-        if (step === last) {
+          step -= 1;
+          show();
+        },
+        options,
+      );
+      next.addEventListener(
+        "click",
+        () => {
+          if (step === last) return;
+          stop();
+          advance();
+        },
+        options,
+      );
+      reset.addEventListener(
+        "click",
+        () => {
+          stop();
           step = 0;
           show();
-        } else if (movement?.playState === "paused") {
-          movement.play();
-        }
-        play.textContent = "Pause";
-        timer = window.setInterval(advance, 3500);
-      }, options);
-      reducedMotion.addEventListener("change", () => {
-        if (reducedMotion.matches) movement?.cancel();
-      }, options);
+        },
+        options,
+      );
+      play.addEventListener(
+        "click",
+        () => {
+          if (timer !== undefined) {
+            stop();
+            movement?.pause();
+            return;
+          }
+
+          if (step === last) {
+            step = 0;
+            show();
+          } else if (movement?.playState === "paused") {
+            movement.play();
+          }
+          play.textContent = "Pause";
+          timer = window.setInterval(advance, 3500);
+        },
+        options,
+      );
+      reducedMotion.addEventListener(
+        "change",
+        () => {
+          if (reducedMotion.matches) movement?.cancel();
+        },
+        options,
+      );
 
       show();
       interactive.hidden = false;

@@ -10,7 +10,9 @@ const answer = choices.find((choice) => choice.correct);
 ---
 
 <knowledge-check class="knowledge-check" data-choices={JSON.stringify(choices)}>
-  <p class="check-question" id={id}>{question}</p>
+  <p class="check-question" id={id}>
+    {question}
+  </p>
   <form data-check-form hidden>
     <fieldset aria-labelledby={id}>
       {choices.map(({ label }, index) => (
@@ -21,11 +23,18 @@ const answer = choices.find((choice) => choice.correct);
       ))}
     </fieldset>
     <button type="submit">Check answer</button>
-    <p class="check-feedback" role="status" aria-atomic="true" data-check-feedback></p>
+    <p
+      class="check-feedback"
+      role="status"
+      aria-atomic="true"
+      data-check-feedback
+    ></p>
   </form>
   <details data-check-answer>
     <summary>Show answer</summary>
-    <p><strong>{answer?.label}</strong> {answer?.feedback}</p>
+    <p>
+      <strong>{answer?.label}</strong> {answer?.feedback}
+    </p>
   </details>
 </knowledge-check>
 
@@ -33,9 +42,15 @@ const answer = choices.find((choice) => choice.correct);
   class KnowledgeCheck extends HTMLElement {
     connectedCallback() {
       const form = this.querySelector<HTMLFormElement>("[data-check-form]")!;
-      const feedback = this.querySelector<HTMLElement>("[data-check-feedback]")!;
-      const answer = this.querySelector<HTMLDetailsElement>("[data-check-answer]")!;
-      const choices: { feedback: string; correct?: true }[] = JSON.parse(this.dataset.choices!);
+      const feedback = this.querySelector<HTMLElement>(
+        "[data-check-feedback]",
+      )!;
+      const answer = this.querySelector<HTMLDetailsElement>(
+        "[data-check-answer]",
+      )!;
+      const choices: { feedback: string; correct?: true }[] = JSON.parse(
+        this.dataset.choices!,
+      );
 
       form.addEventListener("submit", (event) => {
         event.preventDefault();

@@ -1,69 +1,193 @@
 ---
 import Assignment from "../components/Assignment.astro";
+import ChunkOrder from "../components/ChunkOrder";
 import Glossary from "../components/Glossary.astro";
 import KnowledgeCheck from "../components/KnowledgeCheck.astro";
 import PacketStepper from "../components/PacketStepper.astro";
 import ReliabilityLesson from "../components/ReliabilityLesson.astro";
 import WorkedExamples from "../components/WorkedExamples.astro";
-import { tcpSteps, udpSteps, udpRecoverySteps } from "../components/packet-lessons";
+import {
+  tcpSteps,
+  udpSteps,
+  udpRecoverySteps,
+} from "../components/packet-lessons";
 import CourseLayout from "../layouts/CourseLayout.astro";
 
 const tcpTransfer = [
-  ["Connect", "The server waits on a port. The client connects, and TCP opens the connection with a handshake."],
-  ["Send the label", "The client sends the file’s name, size, and SHA-256 fingerprint. The size tells the server how many file bytes to read."],
-  ["Stream and save", "TCP delivers the bytes in order and retries lost data. The server keeps reading until it has the announced number of bytes, then saves the copy under a new name."],
-  ["Check and reply", "The server calculates the saved copy’s fingerprint. It sends OK if the fingerprints match, or MISMATCH if they differ."],
+  [
+    "Connect",
+    "The server waits on a port. The client connects, and TCP opens the connection with a handshake.",
+  ],
+  [
+    "Send the label",
+    "The client sends the file’s name, size, and SHA-256 fingerprint. The size tells the server how many file bytes to read.",
+  ],
+  [
+    "Stream and save",
+    "TCP delivers the bytes in order and retries lost data. The server keeps reading until it has the announced number of bytes, then saves the copy under a new name.",
+  ],
+  [
+    "Check and reply",
+    "The server calculates the saved copy’s fingerprint. It sends OK if the fingerprints match, or MISMATCH if they differ.",
+  ],
 ];
 
-const captureLesson = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}labs/wireshark/`;
+const home = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const captureLesson = `${home}labs/wireshark/`;
+const pythonLesson = `${home}labs/tcp-file-transfer/`;
 ---
 
-<CourseLayout page="course" title="Introduction to Computer Networks" description="Step through TCP and UDP animations, see how missing file data is recovered, and look up networking terms.">
-  <div class="intro course-intro">
-    <div>
-      <h1>Introduction to <span>Computer Networks</span></h1>
-      <p>Follow data between two computers. See what happens when it gets delayed or lost, and how a file transfer can recover.</p>
+<CourseLayout
+  page="course"
+  title="Introduction to Computer Networks"
+  description="Step through TCP and UDP animations, see how missing file data is recovered, and look up networking terms."
+>
+  <div class="signal-hero">
+    <picture class="signal-art">
+      <source
+        media="(max-width: 760px)"
+        srcset={`${home}art/orbital-relay-small.webp`}
+      />
+      <img
+        src={`${home}art/orbital-relay.webp`}
+        alt=""
+        width="1600"
+        height="900"
+        fetchpriority="high"
+      />
+    </picture>
+    <div class="wrap signal-hero-content">
+      <h1>
+        <span>Computer</span>
+        <span>Networks</span>
+      </h1>
+      <p>
+        Follow a packet from sender to receiver. Watch what happens when it
+        drops, then run a transfer yourself.
+      </p>
+      <a class="button primary" href="#tcp">
+        Start the TCP lesson
+      </a>
     </div>
-    <nav class="learning-path" aria-label="Learning path">
-      <h2>Start here</h2>
-      <ol>
-        <li><a href="#tcp"><strong>TCP file transfer</strong><span>Follow a reliable connection.</span></a></li>
-        <li><a href="#udp"><strong>UDP datagrams</strong><span>See how an application handles loss.</span></a></li>
-        <li><a href={captureLesson}><strong>Wireshark lab</strong><span>Read a packet capture.</span></a></li>
-      </ol>
-    </nav>
   </div>
 
-  <section id="tcp" aria-labelledby="tcp-heading" tabindex="-1">
+  <section class="course-overview" aria-labelledby="course-overview-heading">
+    <div class="wrap">
+      <h2 id="course-overview-heading">
+        What happens between send and receive?
+      </h2>
+      <p>
+        Learn how TCP keeps bytes in order, how applications work around UDP
+        loss, and how to see both in a capture.
+      </p>
+      <nav class="course-grid" aria-label="What to learn">
+        <a class="course-tile course-tile-feature" href="#tcp">
+          <img
+            src={`${home}art/packet-gate.webp`}
+            alt=""
+            width="1000"
+            height="563"
+            loading="lazy"
+            decoding="async"
+          />
+          <span>
+            <strong>TCP</strong>
+            <span>Follow a reliable connection</span>
+          </span>
+        </a>
+        <a class="course-tile course-tile-violet" href="#udp">
+          <span>
+            <strong>UDP</strong>
+            <span>See what happens when packets go missing</span>
+          </span>
+        </a>
+        <a class="course-tile" href={pythonLesson}>
+          <span>
+            <strong>Python lab</strong>
+            <span>Send your first file</span>
+          </span>
+        </a>
+        <a class="course-tile" href={captureLesson}>
+          <span>
+            <strong>Wireshark</strong>
+            <span>Read an actual capture</span>
+          </span>
+        </a>
+      </nav>
+    </div>
+  </section>
+
+  <section
+    class="wrap course-chapter"
+    id="tcp"
+    aria-labelledby="tcp-heading"
+    tabindex="-1"
+  >
     <div class="section-heading">
       <h2 id="tcp-heading">Send a file over TCP</h2>
-      <p>Think of a file with a label and a receipt. The client sends the label and file, then the server sends the receipt back.</p>
+      <p>
+        Think of a file with a label and a receipt. The client sends the label
+        and file, then the server sends the receipt back.
+      </p>
     </div>
     <ol class="tcp-steps">
       {tcpTransfer.map(([title, detail], index) => (
         <li>
-          <span class="number" aria-hidden="true">{index + 1}</span>
-          <div><h3>{title}</h3><p>{detail}</p></div>
+          <span class="number" aria-hidden="true">
+            {index + 1}
+          </span>
+          <div>
+            <h3>{title}</h3>
+            <p>{detail}</p>
+          </div>
         </li>
       ))}
     </ol>
     <div class="note">
       <h3>Two confirmations</h3>
-      <p>A TCP <a href="#ack">ACK</a> confirms that the receiving computer’s TCP stack got the bytes. The file transfer program’s <a href="#file-verdict">OK</a> confirms that the saved file passed the <a href="#sha-256">SHA-256</a> check.</p>
+      <p>
+        A TCP <a href="#ack">ACK</a> confirms that the receiving computer’s TCP
+        stack got the bytes. The file transfer program’s{" "}
+        <a href="#file-verdict">OK</a> confirms that the saved file passed the{" "}
+        <a href="#sha-256">SHA-256</a> check.
+      </p>
     </div>
-    <div class="lesson">
+    <div class="lesson lesson-spotlight">
       <h3>Watch TCP open, recover, and close</h3>
-      <p>Follow the <a href="#handshake">handshake</a>, then watch TCP fill a gap in its <a href="#byte-stream">byte stream</a>. See how both sides use <a href="#fin">FIN</a> to finish sending.</p>
-      <p>Use <strong>Next step</strong> or <strong>Play</strong> to move the TCP segment between the client and server. Pause after <strong>Later bytes</strong> to explain why the receiving program still has to wait.</p>
-      <PacketStepper label="TCP connection and recovery animation" steps={tcpSteps} sender="Client" receiver="Server" />
+      <p>
+        Follow the <a href="#handshake">handshake</a>, then watch TCP fill a gap
+        in its <a href="#byte-stream">byte stream</a>. See how both sides use{" "}
+        <a href="#fin">FIN</a> to finish sending.
+      </p>
+      <p>
+        Use <strong>Next step</strong> or <strong>Play</strong> to move the TCP
+        segment between the client and server. Pause after{" "}
+        <strong>Later bytes</strong> to explain why the receiving program still
+        has to wait.
+      </p>
+      <PacketStepper
+        label="TCP connection and recovery animation"
+        steps={tcpSteps}
+        sender="Client"
+        receiver="Server"
+      />
     </div>
     <WorkedExamples lesson="tcp" />
     <KnowledgeCheck
       id="check-tcp-gap"
       question="Predict the next event. Later TCP bytes arrive while the first bytes are still missing. What can the receiving program read from this part of the stream?"
       choices={[
-        { label: "It reads the later bytes immediately.", feedback: "TCP may hold later bytes internally while the earlier bytes are still missing." },
-        { label: "It waits for the missing bytes, then reads in order.", correct: true, feedback: "TCP fills the gap by retransmission before delivering this part of the byte stream in order." },
+        {
+          label: "It reads the later bytes immediately.",
+          feedback:
+            "TCP may hold later bytes internally while the earlier bytes are still missing.",
+        },
+        {
+          label: "It waits for the missing bytes, then reads in order.",
+          correct: true,
+          feedback:
+            "TCP fills the gap by retransmission before delivering this part of the byte stream in order.",
+        },
       ]}
     />
     <div class="lesson-next">
@@ -71,42 +195,103 @@ const captureLesson = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}labs/wire
         <h3>Next lesson · UDP datagrams</h3>
         <p>See what happens when messages are delivered independently.</p>
       </div>
-      <a class="button primary" href="#udp">Continue to UDP</a>
-      <a class="button" href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}labs/tcp-file-transfer/`}>Try the Python TCP lab</a>
+      <a class="button primary" href="#udp">
+        Continue to UDP
+      </a>
+      <a class="button" href={pythonLesson}>
+        Try the Python TCP lab
+      </a>
     </div>
   </section>
 
-  <section id="udp" aria-labelledby="udp-heading" tabindex="-1">
+  <section
+    class="wrap course-chapter"
+    id="udp"
+    aria-labelledby="udp-heading"
+    tabindex="-1"
+  >
     <div class="section-heading">
       <h2 id="udp-heading">Send messages over UDP</h2>
-      <p><a href="#udp-definition">UDP</a> sends each message as a <a href="#datagram">datagram</a>. See how <a href="#packet-loss">loss</a> and <a href="#reordering">reordering</a> affect what reaches the receiving program.</p>
+      <p>
+        <a href="#udp-definition">UDP</a> sends each message as a{" "}
+        <a href="#datagram">datagram</a>. See how{" "}
+        <a href="#packet-loss">loss</a> and <a href="#reordering">reordering</a>{" "}
+        affect what reaches the receiving program.
+      </p>
     </div>
     <h3 class="demo-heading">Watch datagrams arrive</h3>
-    <p class="demo-instructions">Step through the sends and watch the receiver’s arrival list. Pause when #3 arrives and predict what the receiving program can read.</p>
+    <p class="demo-instructions">
+      Step through the sends and watch the receiver’s arrival list. Pause when
+      #3 arrives and predict what the receiving program can read.
+    </p>
     <PacketStepper label="UDP loss and reordering animation" steps={udpSteps} />
     <KnowledgeCheck
       id="check-udp-arrival"
       question="Datagram #3 arrives while #2 is still in transit. Which datagram can the UDP application read now?"
       choices={[
-        { label: "Datagram #3", correct: true, feedback: "UDP delivers each datagram independently. The application can decide whether to use it now or wait for the missing number." },
-        { label: "Neither. UDP waits for #2 first.", feedback: "An application can enforce its own order, but UDP itself delivers #3 when it arrives." },
+        {
+          label: "Datagram #3",
+          correct: true,
+          feedback:
+            "UDP delivers each datagram independently. The application can decide whether to use it now or wait for the missing number.",
+        },
+        {
+          label: "Neither. UDP waits for #2 first.",
+          feedback:
+            "An application can enforce its own order, but UDP itself delivers #3 when it arrives.",
+        },
       ]}
     />
     <div class="lesson" id="udp-recovery">
       <h3>Recover a missing UDP chunk</h3>
-      <p>Illustration of the coursework’s <a href="#selective-repeat">Selective Repeat</a> design. The file transfer program confirms individual chunks and uses a <a href="#timeout">timeout</a> to retry a missing chunk.</p>
-      <p>Step or play until <strong>ACK #2</strong> travels back. Check the two file slots, then explain why the program only resends #1.</p>
-      <PacketStepper label="UDP application recovery animation" steps={udpRecoverySteps} />
-      <p><a href="#reliability">Compare Stop-and-Wait, Go-Back-N and Selective Repeat</a></p>
+      <p>
+        Illustration of the coursework’s{" "}
+        <a href="#selective-repeat">Selective Repeat</a> design. The file
+        transfer program confirms individual chunks and uses a{" "}
+        <a href="#timeout">timeout</a> to retry a missing chunk.
+      </p>
+      <p>
+        Step or play until <strong>ACK #2</strong> travels back. Check the two
+        file slots, then explain why the program only resends #1.
+      </p>
+      <PacketStepper
+        label="UDP application recovery animation"
+        steps={udpRecoverySteps}
+      />
+      <p>
+        <a href="#reliability">
+          Compare Stop-and-Wait, Go-Back-N and Selective Repeat
+        </a>
+      </p>
     </div>
     <WorkedExamples lesson="udp" />
+    <ChunkOrder client:visible />
+    <noscript>
+      <p class="learning-island">
+        Writing by chunk number puts B back in slot 2 and C back in slot 3,
+        giving ABC.
+      </p>
+    </noscript>
     <KnowledgeCheck
       id="check-udp-integrity"
       question="Explain the result. A file rebuilt in arrival order is the same size as the original, but its SHA-256 differs. What could have happened?"
       choices={[
-        { label: "Some chunks were written in the wrong order.", correct: true, feedback: "Swapping chunks preserves their total length and changes the bytes’ positions, which changes the fingerprint." },
-        { label: "A successful send means the saved file is correct.", feedback: "The receiver’s reconstruction determines which bytes end up where. Compare the hashes to check the saved file." },
-        { label: "A hash comparison only checks the file size.", feedback: "SHA-256 uses the file’s contents, including the order of its bytes." },
+        {
+          label: "Some chunks were written in the wrong order.",
+          correct: true,
+          feedback:
+            "Swapping chunks preserves their total length and changes the bytes’ positions, which changes the fingerprint.",
+        },
+        {
+          label: "A successful send means the saved file is correct.",
+          feedback:
+            "The receiver’s reconstruction determines which bytes end up where. Compare the hashes to check the saved file.",
+        },
+        {
+          label: "A hash comparison only checks the file size.",
+          feedback:
+            "SHA-256 uses the file’s contents, including the order of its bytes.",
+        },
       ]}
     />
     <div class="lesson-next">
@@ -114,11 +299,31 @@ const captureLesson = `${import.meta.env.BASE_URL.replace(/\/?$/, "/")}labs/wire
         <h3>Next activity · Wireshark lab</h3>
         <p>Find the handshake, data, and acknowledgements in a capture.</p>
       </div>
-      <a class="button primary" href={captureLesson}>Open the Wireshark lab</a>
+      <a class="button primary" href={captureLesson}>
+        Open the Wireshark lab
+      </a>
     </div>
   </section>
 
-  <ReliabilityLesson />
-  <Assignment />
-  <Glossary />
+  <div class="wrap course-chapter">
+    <ReliabilityLesson />
+  </div>
+  <div class="course-reference">
+    <div class="wrap">
+      <Assignment />
+      <Glossary />
+    </div>
+  </div>
+  <section class="course-closing" aria-labelledby="course-closing-heading">
+    <div class="wrap">
+      <h2 id="course-closing-heading">Read the packets yourself.</h2>
+      <p>
+        Open the nine-frame Wireshark capture and find the handshake, five bytes
+        of data, and the reply.
+      </p>
+      <a class="button primary" href={captureLesson}>
+        Open the Wireshark lab
+      </a>
+    </div>
+  </section>
 </CourseLayout>
