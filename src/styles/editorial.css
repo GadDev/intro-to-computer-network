@@ -113,6 +113,17 @@
   gap: 0.55rem 1rem;
 }
 
+.footer-credit {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--edge);
+  color: var(--muted);
+}
+
 .signal-hero {
   background: var(--background);
 }
