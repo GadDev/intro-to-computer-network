@@ -1,7 +1,7 @@
 ---
 import "../styles/course.css";
 import "@fontsource/barlow-condensed/latin-900.css";
-import "../styles/cinematic.css";
+import "../styles/editorial.css";
 
 interface Props {
   title: string;
@@ -55,16 +55,6 @@ const lab = `${home}labs/wireshark/`;
       </div>
     </header>
 
-    {page !== "course" && (
-      <div class="lab-scene" aria-hidden="true">
-        <img
-          src={`${home}art/packet-gate.webp`}
-          alt=""
-          width="1000"
-          height="563"
-        />
-      </div>
-    )}
     <main
       id="top"
       class={page === "course" ? "course-shell" : "wrap lab-shell"}

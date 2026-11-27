@@ -43,21 +43,11 @@ const pythonLesson = `${home}labs/tcp-file-transfer/`;
   description="Step through TCP and UDP animations, see how missing file data is recovered, and look up networking terms."
 >
   <div class="signal-hero">
-    <picture class="signal-art">
-      <source
-        media="(max-width: 760px)"
-        srcset={`${home}art/orbital-relay-small.webp`}
-      />
-      <img
-        src={`${home}art/orbital-relay.webp`}
-        alt=""
-        width="1600"
-        height="900"
-        fetchpriority="high"
-      />
-    </picture>
     <div class="wrap signal-hero-content">
-      <h1>
+      <p class="eyebrow" aria-hidden="true">
+        Introduction to
+      </p>
+      <h1 aria-label="Introduction to Computer Networks">
         <span>Computer</span>
         <span>Networks</span>
       </h1>
@@ -74,44 +64,28 @@ const pythonLesson = `${home}labs/tcp-file-transfer/`;
   <section class="course-overview" aria-labelledby="course-overview-heading">
     <div class="wrap">
       <h2 id="course-overview-heading">
-        What happens between send and receive?
+        What happens between <span>send and receive?</span>
       </h2>
       <p>
         Learn how TCP keeps bytes in order, how applications work around UDP
         loss, and how to see both in a capture.
       </p>
       <nav class="course-grid" aria-label="What to learn">
-        <a class="course-tile course-tile-feature" href="#tcp">
-          <img
-            src={`${home}art/packet-gate.webp`}
-            alt=""
-            width="1000"
-            height="563"
-            loading="lazy"
-            decoding="async"
-          />
-          <span>
-            <strong>TCP</strong>
-            <span>Follow a reliable connection</span>
-          </span>
+        <a class="course-tile" href="#tcp">
+          <strong>TCP</strong>
+          <span>Follow a reliable connection</span>
         </a>
-        <a class="course-tile course-tile-violet" href="#udp">
-          <span>
-            <strong>UDP</strong>
-            <span>See what happens when packets go missing</span>
-          </span>
+        <a class="course-tile" href="#udp">
+          <strong>UDP</strong>
+          <span>See what happens when packets go missing</span>
         </a>
         <a class="course-tile" href={pythonLesson}>
-          <span>
-            <strong>Python lab</strong>
-            <span>Send your first file</span>
-          </span>
+          <strong>Python lab</strong>
+          <span>Send your first file</span>
         </a>
         <a class="course-tile" href={captureLesson}>
-          <span>
-            <strong>Wireshark</strong>
-            <span>Read an actual capture</span>
-          </span>
+          <strong>Wireshark</strong>
+          <span>Read an actual capture</span>
         </a>
       </nav>
     </div>

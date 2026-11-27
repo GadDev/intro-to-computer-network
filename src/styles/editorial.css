@@ -1,7 +1,7 @@
 :root {
   --background: #000;
-  --surface: #12101d;
-  --edge: #41394d;
+  --surface: #121218;
+  --edge: #403e4c;
   --text: #dfdff2;
   --muted: #bbb8cf;
   --accent: #edff66;
@@ -9,25 +9,48 @@
   --blue: #c3bbff;
   --violet: #c7b9ff;
   --display: "Barlow Condensed", Impact, sans-serif;
+  --mono: ui-monospace, monospace;
 }
 
 .site-header {
-  background: #000;
+  background: var(--background);
 }
+
+.site-header .wrap,
+.signal-hero .wrap,
+.course-overview .wrap,
+.course-closing .wrap {
+  width: min(94% - 0.5rem, 86rem);
+}
+
+.site-header nav {
+  gap: 0.1rem clamp(0.65rem, 1.8vw, 1.5rem);
+}
+
 .site-header nav a,
-.wordmark,
-.site-footer a {
-  font-family: ui-monospace, monospace;
-}
-.site-header nav a {
+.site-footer a,
+.eyebrow {
+  font-family: var(--mono);
   font-size: 0.82rem;
 }
-.wordmark {
-  font-weight: 800;
-  letter-spacing: -0.05em;
+
+.site-header nav a:not([aria-current], :hover, :focus-visible) {
+  text-decoration: none;
 }
-.site-header nav a[aria-current] {
-  text-decoration-thickness: 0.16em;
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font: 900 1.3rem/1 var(--display);
+  text-transform: uppercase;
+}
+
+.wordmark::before {
+  content: "";
+  width: 0.6rem;
+  aspect-ratio: 1;
+  background: var(--accent);
 }
 
 .site-footer {
@@ -41,38 +64,33 @@
   flex-wrap: wrap;
   gap: 0.55rem 1rem;
 }
-.signal-hero {
-  min-height: min(48rem, 88svh);
-  display: grid;
-  align-items: end;
-  isolation: isolate;
-  position: relative;
-  overflow: clip;
-  background: #090514;
-}
 
-.signal-art,
-.signal-hero::after {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-}
-.signal-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 63% center;
-}
-.signal-hero::after {
-  content: "";
-  background:
-    linear-gradient(90deg, #000e 4%, #0008 46%, transparent 85%),
-    linear-gradient(0deg, #000 0%, transparent 48%);
+.signal-hero {
+  background: var(--background);
 }
 
 .signal-hero-content {
-  padding-block: clamp(4rem, 11svh, 8rem) clamp(2.5rem, 7vw, 5.5rem);
+  padding-block: clamp(2.6rem, 8svh, 6rem) clamp(2.5rem, 7vw, 5.5rem);
 }
+
+.eyebrow,
+.intro .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 1.7rem;
+  border-top: 1px solid currentColor;
+}
+
 .signal-hero h1,
 .course-overview h2,
 .course-chapter h2,
@@ -83,31 +101,44 @@
   font-family: var(--display);
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   line-height: 0.9;
 }
 
 .signal-hero h1 {
   max-width: none;
-  font-size: clamp(4.1rem, 11.6vw, 10.1rem);
-  line-height: 0.77;
+  font-size: clamp(3rem, 17.5vw, 15.5rem);
+  line-height: 0.83;
 }
 
 .signal-hero h1 span {
   display: block;
   color: var(--text);
 }
+
 .signal-hero h1 span + span {
-  margin-top: 0.11em;
+  margin-top: 0.06em;
+  color: var(--brand);
 }
-.signal-hero p {
-  max-width: 39ch;
-  margin-block: 1.4rem;
-  color: var(--text);
+
+.signal-hero p:not(.eyebrow) {
+  max-width: 37ch;
+  margin-block: clamp(1.7rem, 5vw, 3.5rem) 1.25rem;
+  font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+  line-height: 1.45;
 }
+
 .course-shell .button,
 .lab-shell .button {
-  border-radius: 0.2rem;
+  border-radius: 0.15rem;
+}
+
+.course-shell .primary,
+.lab-shell .primary {
+  gap: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .course-overview,
@@ -115,76 +146,82 @@
   color-scheme: light;
   --background: #dfdff2;
   --surface: #efeffb;
-  --edge: #a4a0bc;
+  --edge: #9693ac;
   --text: #151122;
   --muted: #4a435c;
   --blue: #3927ad;
-  --violet: #5542ff;
+  --violet: #3e2acc;
   color: var(--text);
   background: var(--background);
 }
 
 .course-overview {
-  padding-block: clamp(3rem, 8vw, 6rem);
+  padding-block: clamp(3rem, 8vw, 7rem);
 }
+
 .course-overview h2,
 .course-closing h2 {
-  font-size: clamp(3rem, 7vw, 6rem);
-  max-width: 16ch;
+  font-size: clamp(3rem, 9.5vw, 8.5rem);
+  max-width: 17ch;
 }
+
+.course-overview h2 span {
+  color: var(--violet);
+}
+
 .course-overview p,
 .course-closing p {
-  max-width: 55ch;
-  margin-top: 0.85rem;
+  max-width: 53ch;
+  margin-top: 1rem;
 }
+
 .course-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.65rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  border-top: 1px solid var(--edge);
+  border-left: 1px solid var(--edge);
 }
+
 .course-tile {
-  display: flex;
   position: relative;
-  isolation: isolate;
-  align-items: end;
-  min-height: 7rem;
-  overflow: clip;
-  padding: clamp(1rem, 3vw, 1.8rem);
-  background: #151122;
-  color: #dfdff2;
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+  padding: clamp(1rem, 2vw, 1.75rem);
+  padding-inline-end: 2rem;
+  border-right: 1px solid var(--edge);
+  border-bottom: 1px solid var(--edge);
+  color: var(--text);
   text-decoration: none;
-  outline-offset: 3px;
+  outline-offset: -4px;
 }
 
 .course-tile strong {
-  display: block;
-  font: 900 clamp(2.2rem, 4vw, 3.8rem)/0.95 var(--display);
+  font: 900 clamp(2.2rem, 4vw, 3.3rem)/0.95 var(--display);
   text-transform: uppercase;
 }
 
-.course-tile img {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.course-tile span {
+  color: var(--muted);
 }
-.course-tile-feature {
-  min-height: 15rem;
-}
-.course-tile-feature::before {
+
+.course-tile::after {
   content: "";
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(0deg, #000, #0002 80%);
+  top: 1.35rem;
+  right: 0.9rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  color: var(--violet);
 }
-.course-tile-violet {
-  background: var(--brand);
-  color: #fff;
+
+.course-tile:is(:hover, :focus-visible) {
+  background: var(--surface);
 }
+
 .course-tile:hover strong {
   text-decoration: underline;
   text-underline-offset: 0.12em;
@@ -195,83 +232,79 @@
 .lab-shell h2 {
   font-size: clamp(2.5rem, 5.4vw, 4.4rem);
 }
+
 .course-chapter {
   padding-block: clamp(2.75rem, 7vw, 5rem);
 }
+
 div.course-chapter {
   padding-block: 0;
 }
+
 .course-chapter .interactive {
   border-radius: 0.3rem;
 }
+
 .course-chapter .packet-stage {
   border-color: #6752a2;
 }
+
 .course-chapter .packet[data-tone="data"] {
   background: #2b1858;
 }
+
 .lesson-spotlight {
   padding: clamp(0.85rem, 3vw, 2rem);
   border-top: 0.2rem solid var(--brand);
-  background: linear-gradient(135deg, #261848, #0d0a16 65%);
+  background: var(--surface);
 }
+
 .lesson-spotlight h3 {
   font: 900 clamp(1.7rem, 4vw, 3.2rem)/1 var(--display);
   text-transform: uppercase;
 }
+
 .course-reference {
   padding-block: 1rem 2rem;
 }
+
 .course-reference .assignment-exercises li,
 .course-reference .glossary-group {
   border-radius: 0.25rem;
 }
+
 .course-closing {
   background: var(--brand);
   color: #fff;
   padding-block: clamp(3rem, 9vw, 7rem);
 }
+
 .course-closing .button {
   margin-top: 1.3rem;
 }
+
+.course-closing :focus-visible {
+  outline-color: #fff;
+}
+
 .lab-shell > .intro {
-  margin-top: 1.25rem;
-  padding: clamp(2rem, 5vw, 4.25rem);
-  border-left: 0.3rem solid var(--brand);
-  background: linear-gradient(105deg, #10091ff5, #12091de6 50%, #0d0a16b3);
-}
-
-.lab-scene {
-  position: absolute;
-  inset-inline: 0;
-  z-index: -1;
-  height: clamp(24rem, 55vw, 37rem);
-  overflow: clip;
-}
-
-.lab-scene img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 45%;
-}
-.lab-scene::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, #000 2%, #0004 80%);
+  padding-block: clamp(2.6rem, 7vw, 5.75rem);
 }
 
 .lab-shell h1 {
-  font-size: clamp(3.2rem, 7.5vw, 6.7rem);
-  max-width: 14ch;
+  font-size: clamp(3.2rem, 9vw, 8.5rem);
+  max-width: 16ch;
 }
+
 .lab-shell h1 span {
-  color: #cbbdff;
+  display: block;
+  color: var(--violet);
 }
+
 .lab-shell .lab-section {
   padding-block: clamp(2.4rem, 6vw, 4.5rem);
 }
+
 .learning-island {
   margin: 1.5rem 0 0;
   max-width: 48rem;
@@ -325,37 +358,6 @@ astro-island[ssr] .island-controls {
   margin-top: 0.8rem;
 }
 
-@media (min-width: 46rem) {
-  .course-grid {
-    grid-template-columns: 1.2fr 1fr 1fr;
-  }
-  .course-tile-feature {
-    grid-column: span 2;
-    grid-row: span 2;
-  }
-  .course-tile-violet {
-    min-height: 11rem;
-  }
-  .course-tile:last-child {
-    grid-column: 3;
-  }
-}
-
-@media (max-width: 40rem) {
-  .signal-hero {
-    min-height: min(36rem, 75svh);
-  }
-  .signal-art img {
-    object-position: 62% center;
-  }
-  .signal-hero::after {
-    background: linear-gradient(0deg, #000 1%, #000b 48%, #0002 100%);
-  }
-  .signal-hero h1 {
-    font-size: clamp(3.85rem, 15vw, 5.5rem);
-  }
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .signal-hero h1 span {
     animation: headline-in 420ms ease-out both;
@@ -363,20 +365,12 @@ astro-island[ssr] .island-controls {
   .signal-hero h1 span + span {
     animation-delay: 80ms;
   }
-  @media (hover: hover) {
-    .course-tile img {
-      transition: transform 280ms ease-out;
-    }
-    .course-tile:hover img {
-      transform: scale(1.05);
-    }
-  }
 }
 
 @keyframes headline-in {
   from {
-    transform: translateY(0.13em);
-    opacity: 0.55;
+    transform: translateY(0.1em);
+    opacity: 0.6;
   }
   to {
     transform: translateY(0);
