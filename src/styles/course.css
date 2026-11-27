@@ -1,14 +1,4 @@
 :root {
-  color-scheme: dark;
-  --background: #101520;
-  --surface: #181f2c;
-  --edge: #343e51;
-  --text: #f5f4fb;
-  --muted: #bec8d8;
-  --accent: #c4f981;
-  --blue: #acf0ff;
-  --violet: #d6befc;
-  --coral: #ffbaaa;
   font-family: system-ui, sans-serif;
   color: var(--text);
   background: var(--background);
@@ -51,8 +41,8 @@ button {
   top: 0.75rem;
   left: 1rem;
   padding: 0.5rem 0.75rem;
-  color: var(--background);
-  background: var(--accent);
+  color: var(--action-text);
+  background: var(--action-background);
   border-radius: 0.35rem;
   transform: translateY(calc(-100% - 1rem));
 }
@@ -318,7 +308,7 @@ packet-stepper {
   content: "";
   position: absolute;
   inset: calc(50% - 1px) 0 auto;
-  border-top: 2px dashed #5e6f87;
+  border-top: 2px dashed var(--control-edge);
 }
 
 .packet {
@@ -372,7 +362,7 @@ packet-stepper {
   min-width: 8.5rem;
   text-align: center;
   padding: 0.35rem 0.5rem;
-  border: 1px dashed #78859b;
+  border: 1px dashed var(--control-edge);
   border-radius: 0.35rem;
   color: var(--muted);
   font-size: 0.8rem;
@@ -417,7 +407,7 @@ packet-stepper {
 button {
   color: var(--text);
   background: var(--surface);
-  border: 1px solid #71819a;
+  border: 1px solid var(--control-edge);
   border-radius: 0.55rem;
   padding: 0.55rem 0.85rem;
   text-decoration: none;
@@ -438,9 +428,9 @@ button:hover:not([aria-disabled="true"]) {
   border-color: var(--blue);
 }
 .primary {
-  color: #172110;
-  background: var(--accent);
-  border-color: var(--accent);
+  color: var(--action-text);
+  background: var(--action-background);
+  border-color: var(--action-edge);
 }
 button[aria-disabled="true"] {
   opacity: 0.63;

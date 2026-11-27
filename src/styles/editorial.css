@@ -1,15 +1,41 @@
 :root {
+  color-scheme: light;
+  --background: #faf9ff;
+  --surface: #fff;
+  --band: #dfdff2;
+  --edge: #a3a0b7;
+  --control-edge: #736e85;
+  --text: #151122;
+  --muted: #4a435c;
+  --accent: #36631a;
+  --brand: #4431d9;
+  --blue: #3927ad;
+  --violet: #4733ce;
+  --coral: #a12c38;
+  --packet-surface: #ede8ff;
+  --action-background: #edff66;
+  --action-text: #172110;
+  --action-edge: #687233;
+  --display: "Barlow Condensed", Impact, sans-serif;
+  --mono: ui-monospace, monospace;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
   --background: #000;
   --surface: #121218;
+  --band: #1c1829;
   --edge: #403e4c;
+  --control-edge: #827a9b;
   --text: #dfdff2;
   --muted: #bbb8cf;
   --accent: #edff66;
   --brand: #5542ff;
   --blue: #c3bbff;
   --violet: #c7b9ff;
-  --display: "Barlow Condensed", Impact, sans-serif;
-  --mono: ui-monospace, monospace;
+  --coral: #ffbaaa;
+  --packet-surface: #2b1858;
+  --action-edge: var(--action-background);
 }
 
 .site-header {
@@ -21,6 +47,27 @@
 .course-overview .wrap,
 .course-closing .wrap {
   width: min(94% - 0.5rem, 86rem);
+}
+
+.header-brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.85rem;
+}
+
+.theme-toggle {
+  min-height: 2.75rem;
+  padding-inline: 0.5rem;
+  border-radius: 0.15rem;
+  font: 700 0.8rem/1 var(--mono);
+  white-space: nowrap;
+}
+
+.theme-toggle[aria-pressed="true"] {
+  background: var(--blue);
+  color: var(--background);
+  border-color: var(--blue);
 }
 
 .site-header nav {
@@ -50,7 +97,8 @@
   content: "";
   width: 0.6rem;
   aspect-ratio: 1;
-  background: var(--accent);
+  background: var(--action-background);
+  border: 1px solid var(--action-edge);
 }
 
 .site-footer {
@@ -143,16 +191,7 @@
 
 .course-overview,
 .course-reference {
-  color-scheme: light;
-  --background: #dfdff2;
-  --surface: #efeffb;
-  --edge: #9693ac;
-  --text: #151122;
-  --muted: #4a435c;
-  --blue: #3927ad;
-  --violet: #3e2acc;
-  color: var(--text);
-  background: var(--background);
+  background: var(--band);
 }
 
 .course-overview {
@@ -246,11 +285,11 @@ div.course-chapter {
 }
 
 .course-chapter .packet-stage {
-  border-color: #6752a2;
+  border-color: var(--control-edge);
 }
 
 .course-chapter .packet[data-tone="data"] {
-  background: #2b1858;
+  background: var(--packet-surface);
 }
 
 .lesson-spotlight {
@@ -309,7 +348,7 @@ div.course-chapter {
   margin: 1.5rem 0 0;
   max-width: 48rem;
   padding: clamp(1rem, 3vw, 1.5rem);
-  border: 1px solid #6752a2;
+  border: 1px solid var(--control-edge);
   border-left: 0.3rem solid var(--brand);
   background: var(--surface);
 }
