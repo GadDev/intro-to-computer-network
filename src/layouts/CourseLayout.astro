@@ -4,7 +4,7 @@ import "../styles/course.css";
 interface Props {
   title: string;
   description: string;
-  page: "course" | "wireshark";
+  page: "course" | "wireshark" | "tcp-file-transfer";
 }
 
 const { title, description, page } = Astro.props;
@@ -30,6 +30,7 @@ const lab = `${home}labs/wireshark/`;
         <nav aria-label="Course">
           <a href={`${course}#tcp`}>TCP</a>
           <a href={`${course}#udp`}>UDP</a>
+          <a href={`${home}labs/tcp-file-transfer/`} aria-current={page === "tcp-file-transfer" ? "page" : undefined}>Python lab</a>
           <a href={lab} aria-current={page === "wireshark" ? "page" : undefined}>Wireshark lab</a>
           <a href={`${course}#assignment`}>Assignment</a>
           <a href={`${course}#glossary`}>Glossary</a>

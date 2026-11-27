@@ -1,0 +1,116 @@
+---
+import clientCode from "../../../public/examples/tcp/client.py?raw";
+import serverCode from "../../../public/examples/tcp/server.py?raw";
+import KnowledgeCheck from "../../components/KnowledgeCheck.astro";
+import CourseLayout from "../../layouts/CourseLayout.astro";
+
+const home = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const examples = `${home}examples/tcp/`;
+---
+
+<CourseLayout page="tcp-file-transfer" title="Python TCP file transfer | Computer Networks" description="Run a Python client and server, transfer a small file on your computer, and follow the bytes from the header to the server's receipt.">
+  <div class="intro lab-intro">
+    <h1>Send a file with <span>Python and TCP</span></h1>
+    <p>Run a server in one terminal and a client in another. Send a small file between them, then follow the bytes to see how the server knows when to stop reading and what it checks before saying OK.</p>
+    <div class="intro-links">
+      <a class="button primary" href="#run-transfer">Run the transfer</a>
+      <a class="button" href="#follow-bytes">Follow the bytes</a>
+    </div>
+  </div>
+
+  <section class="lab-section" aria-labelledby="run-transfer">
+    <div class="section-heading">
+      <h2 id="run-transfer" tabindex="-1">Run it on your computer</h2>
+      <p>Use Python 3 and two terminals in the same folder. Download both files below and save them in that folder with their original names. The lab uses Python’s standard library.</p>
+    </div>
+    <div class="intro-links">
+      <a class="button" href={`${examples}server.py`} download>Download server.py</a>
+      <a class="button" href={`${examples}client.py`} download>Download client.py</a>
+    </div>
+    <ol class="lab-steps">
+      <li><strong>Terminal 1 · Start the server.</strong>
+        <pre class="lab-code"><code>python3 server.py</code></pre>
+        <p>Keep this terminal open when you see <code>Waiting on 127.0.0.1:5001</code>. The address <code>127.0.0.1</code> means “this computer.” Port <code>5001</code> is the numbered entry point the client must use.</p>
+      </li>
+      <li><strong>Terminal 2 · Make a tiny file and send it.</strong>
+        <pre class="lab-code"><code>{`python3 -c "from pathlib import Path; Path('hello.txt').write_bytes(b'HELLO')"
+python3 client.py hello.txt`}</code></pre>
+        <p>The client prints <code>OK. The server saved 5 bytes.</code> Terminal 1 tells you where the server saved them and then returns to the prompt.</p>
+      </li>
+      <li><strong>Terminal 2 · Check the received copy.</strong>
+        <pre class="lab-code"><code>{`python3 -c "from pathlib import Path; print(Path('received-file.bin').read_text())"`}</code></pre>
+        <p>You should see <code>HELLO</code>. To repeat the lab, rename the received copy or use a fresh folder, then restart the server. It handles one transfer per run and preserves any existing output file.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="lab-section" aria-labelledby="follow-bytes">
+    <div class="section-heading">
+      <h2 id="follow-bytes" tabindex="-1">Follow the bytes</h2>
+      <p>Think of a parcel with a label. The client sends the label first and the file second. The server reads the label, counts the file bytes, then sends a receipt back on the same connection.</p>
+    </div>
+    <figure class="worked-diagram">
+      <table>
+        <caption>The exchange for our five-byte file</caption>
+        <thead><tr><th scope="col">Direction</th><th scope="col">What travels</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Client → Server</th><td>40-byte header · length <code>5</code> and the original SHA-256</td></tr>
+          <tr><th scope="row">Client → Server</th><td>5 file bytes · <code>HELLO</code></td></tr>
+          <tr><th scope="row">Server → Client</th><td>1-byte receipt · <code>01</code> in hex means OK</td></tr>
+        </tbody>
+      </table>
+      <figcaption>These are the program’s instructions for interpreting the TCP byte stream. The three rows describe the application exchange. A packet capture can split or combine the forward bytes across TCP segments.</figcaption>
+    </figure>
+
+    <ol class="lab-steps">
+      <li><strong>Open the connection.</strong> The server creates a TCP socket, which is an endpoint the program uses to talk to the network. <code>bind()</code> claims the address and port, <code>listen()</code> lets connections arrive, and <code>accept()</code> returns a new socket for talking to this client. The client calls <code>create_connection()</code>. The operating system handles the <a href={`${home}#handshake`}>TCP handshake</a>.</li>
+      <li><strong>Agree on a label.</strong> Both programs use <code>!Q32s</code> as the header format. <code>!</code> uses network byte order, <code>Q</code> is an eight-byte file length, and <code>32s</code> holds the 32-byte <a href={`${home}#sha-256`}>SHA-256 fingerprint</a>. Their shared format tells the receiver what the first 40 bytes mean.</li>
+      <li><strong>Read in pieces.</strong> The client uses <code>sendall()</code> to hand all the bytes to TCP. The server’s <code>recv(n)</code> returns <em>up to</em> <code>n</code> bytes at a time. If the file arrives as <code>HE</code> and <code>LLO</code>, the server collects 2 bytes, asks for the remaining 3, and gets <code>HELLO</code>. It uses the same loop for the 40-byte header. An empty read before the count is met means the client closed too early.</li>
+      <li><strong>Check, save, and reply.</strong> The server hashes the bytes it received and compares that fingerprint to the header. If they match, it saves the file and sends the byte <code>01</code> in hex. If they differ, it sends <code>00</code> and leaves the output untouched. The client waits for that receipt before printing OK. A TCP <a href={`${home}#ack`}>ACK</a> confirms receipt at the TCP layer. The lab’s receipt confirms what the server program did after reading the bytes.</li>
+    </ol>
+
+    <KnowledgeCheck
+      id="tcp-lab-short-read"
+      question="The header says the file is 5 bytes long. The first call to recv(5) returns HE, which is 2 bytes. What should the server do?"
+      choices={[
+        { label: "Keep reading the remaining 3 bytes.", correct: true, feedback: "TCP delivers a stream, and a short read is normal. The header tells the server how many bytes to collect before checking the fingerprint." },
+        { label: "Save HE and send OK.", feedback: "The server has only 2 of the 5 promised bytes. It still needs the rest of the file before it can verify or save it." },
+      ]}
+    />
+  </section>
+
+  <section class="lab-section" aria-labelledby="lab-code">
+    <div class="section-heading">
+      <h2 id="lab-code" tabindex="-1">Read the Python code</h2>
+      <p>The sample uses a fixed local address, a one-byte reply, and an output name chosen by the server. It reads small files into memory and caps them at 1 MiB. The coursework version also sends the filename, reads and writes blocks, and logs measurements. [PDF p. 2]</p>
+    </div>
+    <details>
+      <summary>server.py · Read, check, and save</summary>
+      <pre class="lab-code" tabindex="0" aria-label="server.py source"><code>{serverCode.trimEnd()}</code></pre>
+    </details>
+    <details>
+      <summary>client.py · Send and wait for the receipt</summary>
+      <pre class="lab-code" tabindex="0" aria-label="client.py source"><code>{clientCode.trimEnd()}</code></pre>
+    </details>
+    <details>
+      <summary>Troubleshoot a failed transfer</summary>
+      <ul class="lab-steps">
+        <li><strong>Connection refused.</strong> Start the server first and check that it says it is waiting on port 5001.</li>
+        <li><strong>Address already in use.</strong> Port 5001 is occupied. Stop the other local server, or change the address tuple in both scripts to use the same free port.</li>
+        <li><strong>File exists.</strong> Rename the previous <code>received-file.bin</code> before restarting the server.</li>
+        <li><strong>Transfer was not confirmed.</strong> Read the server’s terminal. A disconnect or a failed write can close the connection without an OK receipt.</li>
+      </ul>
+    </details>
+    <ul class="lab-steps">
+      <li><a href="https://docs.python.org/3/howto/sockets.html">Python’s socket programming guide</a></li>
+      <li><a href="https://github.com/GadDev/binfo-networks-final-project#tcp-transfer">TCP baseline in the coursework repository</a></li>
+    </ul>
+    <div class="lesson-next">
+      <div>
+        <h3>Next activity · Wireshark</h3>
+        <p>Use the Wireshark lab’s separate sample capture to spot a handshake, data bytes, and an application reply.</p>
+      </div>
+      <a class="button primary" href={`${home}labs/wireshark/`}>Open the Wireshark lab</a>
+    </div>
+  </section>
+</CourseLayout>
