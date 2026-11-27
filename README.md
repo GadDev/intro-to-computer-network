@@ -4,11 +4,11 @@ A beginner-friendly course and presentation companion for the TCP vs UDP File Tr
 
 The first page explains the TCP file transfer and includes animations for TCP connection and recovery, UDP loss and reordering, and Selective Repeat recovery. The assignment section explains what to build, test, submit, and learn. A glossary links the lessons to short definitions. The course uses Astro, TypeScript, and CSS and works locally after the static build.
 
-The Wireshark lab at `/labs/wireshark/` includes a downloadable nine-frame capture, a frame-by-frame reference table, and questions with feedback. The sample records a controlled five-byte loopback transfer using the smoltcp TCP stack.
+The Wireshark lab at `/labs/wireshark/` includes a downloadable nine-frame capture, a frame-by-frame reference table, and questions with feedback. The TCP sample records a controlled five-byte exchange using the smoltcp TCP stack. The UDP lab at `/labs/wireshark/udp/` includes a constructed practice capture and a downloadable loopback script. Both labs show how to capture and interpret your own traffic.
 
 The Python lab at `/labs/tcp-file-transfer/` walks through a local transfer using downloadable client and server scripts. It explains the TCP stream, exact-length reads, and the application's file receipt.
 
-The demo series at `/tutorials/tcp-demo/` uses the teaching scripts for a two-minute rehearsal, a phone-hotspot or Docker transfer, and follow-up projects for a client and dashboard.
+The demo series at `/tutorials/tcp-demo/` links to separate guides for a two-minute rehearsal, a phone-hotspot transfer, Docker, a client dashboard, and a private remote server.
 
 The reliability comparison uses the [component catalog pattern](https://daily-ai-pulse-db253.web.app/guides/generative-ui-architecture-map/). A typed local lesson specification lists the comparison table and packet replays. Astro renders those approved components at build time. The lesson has no runtime model dependency and works offline.
 

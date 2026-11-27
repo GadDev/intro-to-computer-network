@@ -1,0 +1,58 @@
+---
+import DemoLessonLayout from "../../../layouts/DemoLessonLayout.astro";
+---
+
+<DemoLessonLayout
+  title="Try a private remote server"
+  description="Run the same teaching server on a VM you control and reach it over a private network."
+  downloads
+  next={{ path: "labs/wireshark/", label: "Read a TCP capture" }}
+>
+  <section class="lab-section" aria-labelledby="private-server">
+    <div class="section-heading">
+      <h2 id="private-server" tabindex="-1">
+        Run and verify the remote transfer
+      </h2>
+      <p>
+        Use this extension to learn what changes when the server is on another
+        network.
+      </p>
+    </div>
+    <ol class="lab-steps">
+      <li>Put the teaching server on a VM you control with Python 3.</li>
+      <li>
+        Connect the VM and your laptop to a private network such as
+        <a href="https://tailscale.com/docs/features/access-control">
+          Tailscale
+        </a>
+        . Allow the demo laptop to reach port 5001 and keep it closed on the
+        public interface.
+      </li>
+      <li>
+        Start the server with{" "}
+        <code>python3 server.py --host VM_PRIVATE_IP</code>. On your laptop,
+        send HELLO with
+        <code>python3 client.py hello.txt --host VM_PRIVATE_IP</code>.
+        Substitute the VM’s private address in both commands.
+      </li>
+      <li>
+        Check the application’s OK reply and compare the file hashes on the two
+        machines. Stop the listener after the rehearsal.
+      </li>
+    </ol>
+    <details>
+      <summary>Verify which address is reachable</summary>
+      <p>
+        Compare the listener’s starting message with the destination in the
+        client command. Both should show the VM’s private address and port 5001.
+        Run the same transfer on loopback first if you need to isolate an
+        application problem from a network problem.
+      </p>
+    </details>
+    <p>
+      <strong>Check your work.</strong> Your authorized laptop gets an OK reply
+      and the VM saves the practice file. Keep the listener off the public
+      interface.
+    </p>
+  </section>
+</DemoLessonLayout>

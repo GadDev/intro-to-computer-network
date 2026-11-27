@@ -1,0 +1,56 @@
+---
+interface Props {
+  protocol: "tcp" | "udp";
+  port: number;
+}
+const { protocol, port } = Astro.props;
+---
+
+<section class="lab-section" aria-labelledby="live-capture">
+  <div class="section-heading">
+    <h2 id="live-capture">Capture your own loopback traffic</h2>
+    <p>
+      Use traffic from a practice program on your computer. Have the program
+      ready before starting the capture.
+    </p>
+  </div>
+  <ol class="lab-steps">
+    <li>
+      <strong>Select the loopback interface.</strong> In Capture → Options, look
+      for
+      <code>lo</code> on Linux, <code>lo0</code> on macOS, or the Npcap loopback
+      capture interface on Windows. The Wi-Fi interface does not show transfers
+      whose two endpoints use <code>127.0.0.1</code>.
+    </li>
+    <li>
+      <strong>Start before sending.</strong> Set the optional capture filter
+      <code>{protocol + " port " + port}</code> to record both directions on the
+      lab port. Captures without this filter may include other loopback traffic.
+      <slot />
+    </li>
+    <li>
+      <strong>Stop, inspect, and save.</strong> Use the display filter
+      <code>{protocol + ".port == " + port}</code> in the main window. Select a
+      row, expand the transport header in Packet Details, and compare its fields
+      with the highlighted Packet Bytes. Save the capture as a{" "}
+      <code>.pcapng</code>.
+    </li>
+  </ol>
+  <div class="note">
+    <h3>Capture filter or display filter?</h3>
+    <p>
+      A capture filter decides which packets get recorded. A display filter
+      changes which recorded packets you can see. Clear the display filter to
+      see everything that was captured.
+    </p>
+  </div>
+  <p>
+    <a href="https://www.wireshark.org/docs/wsug_html_chunked/ChCapCaptureFilterSection.html">
+      Wireshark capture filter guide
+    </a>
+    ·
+    <a href="https://wiki.wireshark.org/CaptureSetup/loopback">
+      Platform loopback capture notes
+    </a>
+  </p>
+</section>
