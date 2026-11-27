@@ -1,5 +1,7 @@
 ---
 import "../styles/course.css";
+import "@fontsource/barlow-condensed/latin-900.css";
+import "../styles/cinematic.css";
 
 interface Props {
   title: string;
@@ -20,32 +22,73 @@ const lab = `${home}labs/wireshark/`;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
     <title>{title}</title>
   </head>
   <body>
-    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="skip-link" href="#top">
+      Skip to content
+    </a>
     <header class="site-header">
       <div class="wrap header-inner">
-        <a class="wordmark" href={page === "course" ? "#top" : home}>Computer Networks</a>
+        <a class="wordmark" href={page === "course" ? "#top" : home}>
+          Computer Networks
+        </a>
         <nav aria-label="Course">
           <a href={`${course}#tcp`}>TCP</a>
           <a href={`${course}#udp`}>UDP</a>
-          <a href={`${home}labs/tcp-file-transfer/`} aria-current={page === "tcp-file-transfer" ? "page" : undefined}>Python lab</a>
-          <a href={lab} aria-current={page === "wireshark" ? "page" : undefined}>Wireshark lab</a>
+          <a
+            href={`${home}labs/tcp-file-transfer/`}
+            aria-current={page === "tcp-file-transfer" ? "page" : undefined}
+          >
+            Python lab
+          </a>
+          <a
+            href={lab}
+            aria-current={page === "wireshark" ? "page" : undefined}
+          >
+            Wireshark lab
+          </a>
           <a href={`${course}#assignment`}>Assignment</a>
           <a href={`${course}#glossary`}>Glossary</a>
         </nav>
       </div>
     </header>
 
-    <main id="top" class="wrap" tabindex="-1">
+    {page !== "course" && (
+      <div class="lab-scene" aria-hidden="true">
+        <img
+          src={`${home}art/packet-gate.webp`}
+          alt=""
+          width="1000"
+          height="563"
+        />
+      </div>
+    )}
+    <main
+      id="top"
+      class={page === "course" ? "course-shell" : "wrap lab-shell"}
+      tabindex="-1"
+    >
       <slot />
     </main>
 
-    <footer class="wrap">
-      <a href="https://github.com/GadDev/binfo-networks-final-project">Coursework code and results</a>
-      <a href="https://www.rfc-editor.org/rfc/rfc9293.html">TCP specification</a>
-      <a href="https://www.rfc-editor.org/rfc/rfc768.html">UDP specification</a>
+    <footer class="wrap site-footer">
+      <nav aria-label="Course resources">
+        <a href={`${course}#assignment`}>Assignment</a>
+        <a href={`${course}#glossary`}>Glossary</a>
+        <a href="https://github.com/GadDev/binfo-networks-final-project">
+          Coursework code and results
+        </a>
+      </nav>
+      <nav aria-label="Protocol references">
+        <a href="https://www.rfc-editor.org/rfc/rfc9293.html">
+          TCP specification
+        </a>
+        <a href="https://www.rfc-editor.org/rfc/rfc768.html">
+          UDP specification
+        </a>
+      </nav>
     </footer>
   </body>
 </html>
