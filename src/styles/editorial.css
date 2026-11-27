@@ -1,0 +1,418 @@
+:root {
+  color-scheme: light;
+  --background: #faf9ff;
+  --surface: #fff;
+  --band: #dfdff2;
+  --edge: #a3a0b7;
+  --control-edge: #736e85;
+  --text: #151122;
+  --muted: #4a435c;
+  --accent: #36631a;
+  --brand: #4431d9;
+  --blue: #3927ad;
+  --violet: #4733ce;
+  --coral: #a12c38;
+  --packet-surface: #ede8ff;
+  --action-background: #edff66;
+  --action-text: #172110;
+  --action-edge: #687233;
+  --display: "Barlow Condensed", Impact, sans-serif;
+  --mono: ui-monospace, monospace;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #000;
+  --surface: #121218;
+  --band: #1c1829;
+  --edge: #403e4c;
+  --control-edge: #827a9b;
+  --text: #dfdff2;
+  --muted: #bbb8cf;
+  --accent: #edff66;
+  --brand: #5542ff;
+  --blue: #c3bbff;
+  --violet: #c7b9ff;
+  --coral: #ffbaaa;
+  --packet-surface: #2b1858;
+  --action-edge: var(--action-background);
+}
+
+.site-header {
+  background: var(--background);
+}
+
+.site-header .wrap,
+.signal-hero .wrap,
+.course-overview .wrap,
+.course-closing .wrap {
+  width: min(94% - 0.5rem, 86rem);
+}
+
+.header-brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.85rem;
+}
+
+.theme-toggle {
+  min-height: 2.75rem;
+  padding-inline: 0.5rem;
+  border-radius: 0.15rem;
+  font: 700 0.8rem/1 var(--mono);
+  white-space: nowrap;
+}
+
+.theme-toggle[aria-pressed="true"] {
+  background: var(--blue);
+  color: var(--background);
+  border-color: var(--blue);
+}
+
+.site-header nav {
+  gap: 0.1rem clamp(0.65rem, 1.8vw, 1.5rem);
+}
+
+.site-header nav a,
+.site-footer a,
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+
+.site-header nav a:not([aria-current], :hover, :focus-visible) {
+  text-decoration: none;
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font: 900 1.3rem/1 var(--display);
+  text-transform: uppercase;
+}
+
+.wordmark::before {
+  content: "";
+  width: 0.6rem;
+  aspect-ratio: 1;
+  background: var(--action-background);
+  border: 1px solid var(--action-edge);
+}
+
+.site-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1.5rem;
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+}
+
+.signal-hero {
+  background: var(--background);
+}
+
+.signal-hero-content {
+  padding-block: clamp(2.6rem, 8svh, 6rem) clamp(2.5rem, 7vw, 5.5rem);
+}
+
+.eyebrow,
+.intro .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 1.7rem;
+  border-top: 1px solid currentColor;
+}
+
+.signal-hero h1,
+.course-overview h2,
+.course-chapter h2,
+.course-reference h2,
+.course-closing h2,
+.lab-shell h1,
+.lab-shell h2 {
+  font-family: var(--display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+}
+
+.signal-hero h1 {
+  max-width: none;
+  font-size: clamp(3rem, 17.5vw, 15.5rem);
+  line-height: 0.83;
+}
+
+.signal-hero h1 span {
+  display: block;
+  color: var(--text);
+}
+
+.signal-hero h1 span + span {
+  margin-top: 0.06em;
+  color: var(--brand);
+}
+
+.signal-hero p:not(.eyebrow) {
+  max-width: 37ch;
+  margin-block: clamp(1.7rem, 5vw, 3.5rem) 1.25rem;
+  font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+  line-height: 1.45;
+}
+
+.course-shell .button,
+.lab-shell .button {
+  border-radius: 0.15rem;
+}
+
+.course-shell .primary,
+.lab-shell .primary {
+  gap: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.course-overview,
+.course-reference {
+  background: var(--band);
+}
+
+.course-overview {
+  padding-block: clamp(3rem, 8vw, 7rem);
+}
+
+.course-overview h2,
+.course-closing h2 {
+  font-size: clamp(3rem, 9.5vw, 8.5rem);
+  max-width: 17ch;
+}
+
+.course-overview h2 span {
+  color: var(--violet);
+}
+
+.course-overview p,
+.course-closing p {
+  max-width: 53ch;
+  margin-top: 1rem;
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  border-top: 1px solid var(--edge);
+  border-left: 1px solid var(--edge);
+}
+
+.course-tile {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+  padding: clamp(1rem, 2vw, 1.75rem);
+  padding-inline-end: 2rem;
+  border-right: 1px solid var(--edge);
+  border-bottom: 1px solid var(--edge);
+  color: var(--text);
+  text-decoration: none;
+  outline-offset: -4px;
+}
+
+.course-tile strong {
+  font: 900 clamp(2.2rem, 4vw, 3.3rem)/0.95 var(--display);
+  text-transform: uppercase;
+}
+
+.course-tile span {
+  color: var(--muted);
+}
+
+.course-tile::after {
+  content: "";
+  position: absolute;
+  top: 1.35rem;
+  right: 0.9rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  color: var(--violet);
+}
+
+.course-tile:is(:hover, :focus-visible) {
+  background: var(--surface);
+}
+
+.course-tile:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.course-chapter h2,
+.course-reference h2,
+.lab-shell h2 {
+  font-size: clamp(2.5rem, 5.4vw, 4.4rem);
+}
+
+.course-chapter {
+  padding-block: clamp(2.75rem, 7vw, 5rem);
+}
+
+div.course-chapter {
+  padding-block: 0;
+}
+
+.course-chapter .interactive {
+  border-radius: 0.3rem;
+}
+
+.course-chapter .packet-stage {
+  border-color: var(--control-edge);
+}
+
+.course-chapter .packet[data-tone="data"] {
+  background: var(--packet-surface);
+}
+
+.lesson-spotlight {
+  padding: clamp(0.85rem, 3vw, 2rem);
+  border-top: 0.2rem solid var(--brand);
+  background: var(--surface);
+}
+
+.lesson-spotlight h3 {
+  font: 900 clamp(1.7rem, 4vw, 3.2rem)/1 var(--display);
+  text-transform: uppercase;
+}
+
+.course-reference {
+  padding-block: 1rem 2rem;
+}
+
+.course-reference .assignment-exercises li,
+.course-reference .glossary-group {
+  border-radius: 0.25rem;
+}
+
+.course-closing {
+  background: var(--brand);
+  color: #fff;
+  padding-block: clamp(3rem, 9vw, 7rem);
+}
+
+.course-closing .button {
+  margin-top: 1.3rem;
+}
+
+.course-closing :focus-visible {
+  outline-color: #fff;
+}
+
+.lab-shell > .intro {
+  padding-block: clamp(2.6rem, 7vw, 5.75rem);
+}
+
+.lab-shell h1 {
+  font-size: clamp(3.2rem, 9vw, 8.5rem);
+  max-width: 16ch;
+}
+
+.lab-shell h1 span {
+  display: block;
+  color: var(--violet);
+}
+
+.lab-shell .lab-section {
+  padding-block: clamp(2.4rem, 6vw, 4.5rem);
+}
+
+.learning-island {
+  margin: 1.5rem 0 0;
+  max-width: 48rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--control-edge);
+  border-left: 0.3rem solid var(--brand);
+  background: var(--surface);
+}
+
+.learning-island figcaption p {
+  margin-top: 0.45rem;
+  color: var(--muted);
+}
+astro-island[ssr] .island-controls {
+  display: none;
+}
+.byte-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0;
+  margin: 1rem 0;
+  list-style: none;
+}
+.byte-slots li {
+  display: grid;
+  width: 2.45rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--edge);
+  font-family: ui-monospace, monospace;
+}
+.byte-slots li[data-received="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.island-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.85rem;
+}
+.island-controls button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.island-controls button:disabled {
+  opacity: 0.6;
+}
+.island-status {
+  margin-top: 0.8rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .signal-hero h1 span {
+    animation: headline-in 420ms ease-out both;
+  }
+  .signal-hero h1 span + span {
+    animation-delay: 80ms;
+  }
+}
+
+@keyframes headline-in {
+  from {
+    transform: translateY(0.1em);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
